@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NRE functional BOM list</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F7F9; --panel:#FFFFFF; --ink:#1B2230; --muted:#5B6472; --rule:#E2E5EA; --rule-strong:#C3C9D2;
+  --accent:#1F3B5C; --accent-tint:#F0F3F7; --head:#F3F5F8;
+  --edit:#B42318; --edit-tint:#FEF3F2; --warn-ink:#7A4F01; --warn-bg:#FFF6DB; --ok:#1E6B45; --hover:#F5F7FA; --zebra:#FAFBFC;
+  --font:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-c:var(--font);
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wrap{max-width:1680px;margin:0 auto;padding:0 20px}
+
+/* Header */
+header.top{background:var(--panel);border-bottom:1px solid var(--rule)}
+.top-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding-top:20px;padding-bottom:20px}
+.brand{flex:1 1 360px;min-width:260px;display:flex;flex-direction:column;gap:2px}
+.eyebrow{margin:0;font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.proj-name{font:600 38px/1.15 var(--font);color:var(--ink);border:0;border-bottom:2px dashed transparent;background:transparent;padding:0 2px;margin-left:-2px;width:100%;max-width:640px;field-sizing:content;min-width:8ch}
+.proj-name:hover{border-bottom-color:var(--rule-strong)}
+.proj-name:focus{outline:none;border-bottom-color:var(--accent)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.controls{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.demands{display:flex;flex-direction:column;gap:6px}
+.demands .grp{font-size:13px;font-weight:600;color:var(--muted)}
+.pair{display:flex;gap:10px}
+.counter{display:flex;align-items:baseline;gap:6px;border:1px solid var(--rule-strong);border-radius:6px;background:#fff;padding:4px 12px}
+.counter label{font:600 14px var(--font);color:var(--muted)}
+.counter input{width:calc(5ch + 10px);border:0;background:transparent;color:var(--ink);font:600 28px/1.1 var(--font-c);text-align:right;font-variant-numeric:tabular-nums;padding:0 2px}
+.counter input:focus{outline:none}
+.counter:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px #D5DEEA}
+.counter .unit{font:600 15px var(--font-c);color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule-strong);background:var(--panel);border-radius:6px;padding:9px 16px;cursor:pointer;font-weight:700;font-size:15px;white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:disabled{background:#8C9AAE;border-color:#8C9AAE}
+.btn.primary:hover{opacity:.9}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:6px 12px;font-size:14px;font-weight:600}
+.btn.link{border:0;background:none;padding:2px 0;text-decoration:underline;text-underline-offset:3px;font-weight:500}
+.dl{display:flex;flex-direction:column;gap:6px;align-items:flex-start;align-self:flex-end}
+.btn.big{padding:12px 20px;font-size:16px}
+.dl .hint{font-size:12px;color:var(--muted);min-height:16px}
+
+/* Steps */
+nav.steps{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--rule);padding-top:env(safe-area-inset-top,0px)}
+.steps ol{list-style:none;margin:0;padding:0;display:flex;gap:4px;overflow-x:auto}
+.steps li button{border:0;background:none;padding:13px 16px 11px;cursor:pointer;display:flex;align-items:baseline;gap:8px;border-bottom:3px solid transparent;color:var(--muted);font-weight:600;font-size:15px;white-space:nowrap}
+.steps li button .n{font:600 13px var(--font-c);border:1.5px solid currentColor;border-radius:50%;width:22px;height:22px;display:inline-grid;place-items:center;align-self:center}
+.steps li button .c{font:500 14px var(--font-c);color:var(--muted)}
+.steps li button[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.steps li button:hover{color:var(--ink)}
+
+main.wrap{padding-top:22px;padding-bottom:60px}
+.lede{max-width:80ch;color:var(--muted);margin:0 0 18px;font-size:16px}
+h2{font-size:22px;margin:0 0 6px;font-weight:600}
+h3{font-size:18px;margin:30px 0 8px;font-weight:700}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+.pad{padding:16px 18px}
+
+/* Toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 10px}
+.toolbar .grow{flex:1}
+.search{border:1px solid var(--rule-strong);border-radius:6px;padding:8px 12px;font-size:15px;background:var(--panel);min-width:240px}
+select.sel{border:1px solid var(--rule-strong);border-radius:6px;padding:8px 10px;font-size:15px;background:var(--panel)}
+.chk{display:inline-flex;gap:8px;align-items:center;font-size:15px;cursor:pointer;user-select:none}
+.count{font:600 15px var(--font-c);color:var(--muted)}
+
+/* Tables */
+.tscroll{overflow:auto;max-height:calc(100vh - 230px);background:var(--panel);border:1px solid var(--rule);border-radius:8px;box-shadow:0 1px 2px rgba(16,40,80,.05)}
+table.grid{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font:15px/1.45 var(--font-c);font-variant-numeric:tabular-nums}
+.grid th{position:sticky;top:0;z-index:2;background:var(--head);text-align:left;font-weight:600;font-size:13.5px;color:var(--ink);padding:10px 12px;border-bottom:1px solid var(--rule-strong);vertical-align:bottom;white-space:nowrap}
+.grid th.ed{color:var(--edit);border-bottom-color:var(--edit)}
+.grid tbody tr:nth-child(even) td{background:var(--zebra)}
+.grid td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top;white-space:nowrap}
+.grid tbody tr:hover td{background:var(--hover)}
+.grid .num{text-align:right}
+.grid .wrap{white-space:normal;min-width:220px;max-width:380px}
+.grid .wide{white-space:normal;min-width:260px;max-width:460px}
+.grid.mid-rows td{vertical-align:middle}
+.grid .mid{white-space:normal;overflow-wrap:anywhere;min-width:110px;max-width:210px}
+.grid td.sticky.wrap{min-width:220px;max-width:300px}
+.grid .dim{color:var(--muted)}
+.grid .strong{font-weight:500}
+.grid td.warn{background:var(--warn-bg)!important;color:var(--warn-ink)}
+.grid td.sticky,.grid th.sticky{position:sticky;left:0;z-index:1;background:var(--panel);box-shadow:1px 0 0 var(--rule)}
+.grid th.sticky{z-index:3;background:var(--head)}
+.grid tr.sub td{background:var(--zebra);font-size:13px;border-bottom-color:var(--rule)}
+.grid tr.sub td:first-child{border-left:3px solid var(--rule-strong)}
+.grid tfoot td{position:sticky;bottom:0;background:var(--panel);border-top:2px solid var(--ink);border-bottom:0;font-weight:600}
+.grid a{color:inherit;text-underline-offset:2px}
+.tag{display:inline-block;font:500 12.5px var(--font-c);padding:1px 8px;border-radius:3px;border:1px solid var(--rule-strong);color:var(--muted);margin:0 4px 2px 0;white-space:nowrap}
+.tag.warn{background:var(--warn-bg);color:var(--warn-ink);border-color:transparent}
+.tag.ok{color:var(--ok);border-color:currentColor}
+.tag.edit{color:var(--edit);border-color:currentColor}
+.xbtn{border:0;background:none;cursor:pointer;color:var(--muted);font:600 14px var(--font-c);padding:0 4px}
+.xbtn:hover{color:var(--ink)}
+
+/* Editable cells: red rule like the Master Tracker */
+.cell-in{width:90px;border:1px solid #F3C9C4;border-left:3px solid var(--edit);background:var(--edit-tint);border-radius:4px;padding:5px 8px;font:inherit;text-align:right}
+.cell-in.txt{width:180px;text-align:left}
+.cell-in::placeholder{color:#6B7684;opacity:1}
+.cell-in:focus{outline:none;border-color:var(--edit);background:var(--panel)}
+.cell-in.set{font-weight:600}
+select.cell-sel{border:1px solid #F3C9C4;border-left:3px solid var(--edit);border-radius:4px;background:var(--edit-tint);padding:4px 6px;width:320px;max-width:100%;font:inherit}
+
+/* Upload */
+.drop{border:1.5px dashed var(--rule-strong);background:var(--panel)!important;border-radius:8px;background:var(--panel);padding:34px 20px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
+.drop.over{border-color:var(--ink);background:var(--hover)}
+.drop strong{display:block;font-size:18px;color:var(--ink);font-weight:600;margin-bottom:6px}
+.drop p{margin:0;color:var(--muted)}
+.infoline{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;margin:14px 0}
+.note{border-left:3px solid var(--rule-strong);padding:6px 12px;color:var(--muted);margin:10px 0;max-width:90ch}
+.note.warn{border-left-color:var(--warn-ink);color:var(--warn-ink);background:var(--warn-bg)}
+.note.bad{border-left:4px solid var(--edit);color:var(--ink);background:var(--edit-tint);border-radius:4px;margin:0 0 14px}
+.tag.bad{background:var(--edit);color:#fff;border-color:var(--edit)}
+.empty{padding:48px 20px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+
+/* Final summary + settings */
+.settings{display:flex;flex-wrap:wrap;gap:12px 26px;align-items:flex-end;padding:14px 18px;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600;color:var(--muted)}
+.field .row{display:flex;align-items:center;gap:6px;color:var(--ink)}
+.field input{border:1px solid var(--rule-strong);background:#fff;border-radius:6px;padding:7px 9px;width:80px;text-align:right;font:600 16px var(--font-c)}
+.field input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.field input.kw{width:170px;text-align:left}
+.ledger{display:flex;flex-wrap:wrap;gap:0;margin:0 0 14px;border:1px solid var(--rule);border-radius:8px;background:var(--panel)}
+.ledger div{padding:10px 18px;border-right:1px solid var(--rule)}
+.ledger div:last-child{border-right:0}
+.ledger dt{font-size:14px;color:var(--muted);font-weight:600}
+.ledger dd{margin:0;font:600 20px var(--font-c);color:var(--ink);font-variant-numeric:tabular-nums}
+.ledger dd.warnv{color:var(--warn-ink)}
+.ledger div.big{padding:14px 28px;background:var(--panel)}
+.ledger div.big dt{font-size:14px;color:var(--muted);font-weight:600}
+.ledger div.big dd{font-size:36px;line-height:1.15;color:var(--ink);font-weight:600}
+.ledger{align-items:stretch}
+.ledger div:not(.big){display:flex;flex-direction:column;justify-content:center}
+.two{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:10px 16px;border-radius:4px;font-size:14px;z-index:50;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.params td .cell-in{width:70px}
+.grid.sheet{min-width:0}
+.grid.sheet td,.grid.sheet th{border-right:1px solid var(--rule)}
+.grid.sheet td.in{padding:0;width:84px}
+.cell-plain{display:block;width:84px;border:0;background:transparent;padding:9px 12px;font:inherit;text-align:right;color:var(--ink)}
+.cell-plain::placeholder{color:#8A94A3}
+.cell-plain:hover{background:var(--hover)}
+.cell-plain:focus{outline:2px solid var(--accent);outline-offset:-2px;background:#fff}
+.cell-plain.txt{text-align:left}
+.sortbtn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font:inherit;color:inherit}
+.sortbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sortbtn .arr{font-size:10px;color:#A0A8B5}
+th[aria-sort="ascending"] .arr,th[aria-sort="descending"] .arr{color:var(--accent)}
+th.num .sortbtn{flex-direction:row-reverse}
+.cell-edit{width:92px;border:0;border-bottom:1.5px dotted #98A2B3;background:transparent;padding:3px 2px;font:inherit;color:var(--ink);text-align:right;border-radius:0}
+.cell-edit.txt{width:170px;text-align:left}
+.cell-edit:hover{background:var(--hover)}
+.cell-edit:focus{outline:2px solid var(--accent);outline-offset:1px;background:#fff;border-bottom-color:transparent}
+.cell-edit.set{color:#1D4ED8;font-weight:600}
+.cell-edit::placeholder{color:#98A2B3}
+.grid.final td.strongcell .cell-edit{font-weight:600}
+.grid.final td.strongcell .cell-edit.set{color:#1D4ED8}
+.cell-plain.strong{font-weight:700}
+.grid.sheet td.blank{background:var(--warn-bg)!important;box-shadow:inset 0 0 0 1px #E9C46A}
+.grid.sheet tr.upd td{background:#EEF1F5!important;border-bottom:2px solid var(--rule-strong)}
+.grid.sheet td.del{padding:0 6px;vertical-align:middle}
+@media (max-width:720px){
+  .wrap{padding:0 12px}
+  .proj-name{font-size:30px}
+  .counter input{font-size:26px}
+  .tscroll{max-height:none}
+  .search{min-width:0;flex:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <h1 class="eyebrow">NRE functional BOM list</h1>
+      <label for="proj" class="sr-only">Project name</label>
+      <input id="proj" class="proj-name" autocomplete="off" spellcheck="false" placeholder="Project name" title="Click to rename the project">
+    </div>
+    <div class="controls">
+      <div class="demands" role="group" aria-label="Monthly demand">
+        <span class="grp">Monthly demand</span>
+        <div class="pair">
+          <div class="counter"><label for="dA">A</label><input id="dA" inputmode="numeric" list="dlist" autocomplete="off"><span class="unit">r/m</span></div>
+          <div class="counter"><label for="dB">B</label><input id="dB" inputmode="numeric" list="dlist" autocomplete="off"><span class="unit">r/m</span></div>
+        </div>
+        <datalist id="dlist"></datalist>
+      </div>
+      <div class="dl"><button class="btn primary big" id="dlBtn" disabled>Download final workbook</button><span class="hint" id="dlHint"></span></div>
+    </div>
+  </div>
+</header>
+<nav class="steps" aria-label="Workflow">
+  <div class="wrap"><ol id="steps"></ol></div>
+</nav>
+<main class="wrap" id="view"></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileIn" multiple accept=".xlsx,.xlsm,.xls" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script>
+/* NRE functional BOM list core — no DOM. Works in browser (globals) and Node (module.exports). */
+(function (root) {
+  "use strict";
+  const EPS = 1e-9;
+  const ceil = (x) => Math.ceil(x - EPS);
+  const norm = (s) => String(s == null ? "" : s).replace(/\s+/g, " ").trim().toLowerCase();
+  const clean = (s) => String(s == null ? "" : s).replace(/\s+/g, " ").trim();
+  const num = (v) => {
+    if (v == null || v === "") return null;
+    if (typeof v === "number") return isFinite(v) ? v : null;
+    const s = String(v).replace(/[$,\s]/g, "");
+    if (s === "") return null;
+    const n = Number(s);
+    return isFinite(n) ? n : null;
+  };
+  const mapKey = (fn, st) => norm(fn) + "|" + norm(st);
+
+  /* ---------------- IE standard ---------------- */
+  const FORMULA_ROWS = {
+    "me|l10": "stage:L10", "me|l11": "stage:L11", "me|bsl": "stage:BSL",
+    "me|total": "total", "me|station line": "stationLine", "me|pxe line": "pxe",
+    "to|pxe line": "pxe", "debug|test": "pxe",
+  };
+  const PARAM_KEYS = [
+    [/total test time/i, "test"], [/handling/i, "handle"], [/working/i, "work"],
+    [/yield/i, "yield"], [/efficiency/i, "eff"], [/retest/i, "retest"],
+  ];
+
+  function tat(p) { return (p.test + p.handle) / p.work / p.yield / p.eff / (1 - p.retest); }
+  function stageQty(ie, stage, d) { return ceil(tat(ie.stages[stage]) * d / ie.days); }
+
+  // Evaluate an IE library row at demand d -> {v, exact}
+  function evalLib(ie, row, d) {
+    const k = row.kind;
+    if (k === "const") return { v: row.value, exact: true };
+    if (k && k !== "table") {
+      const L10 = stageQty(ie, "L10", d), L11 = stageQty(ie, "L11", d), BSL = stageQty(ie, "BSL", d);
+      let v;
+      if (k.startsWith("stage:")) v = stageQty(ie, k.slice(6), d);
+      else if (k === "total") v = L10 + L11 + BSL;
+      else if (k === "l11bsl") v = L11 + BSL;
+      else if (k === "stationLine") v = L10 / ie.pxeDiv;
+      else if (k === "pxe") v = ceil(L10 / ie.pxeDiv);
+      return { v, exact: true };
+    }
+    if (row.vals && row.vals[d] != null) return { v: row.vals[d], exact: true };
+    return { v: 0, exact: false, missing: true };
+    const ds = Object.keys(row.vals || {}).map(Number).sort((a, b) => a - b);
+    if (d < ds[0]) return { v: row.vals[ds[0]], exact: false };
+    const up = ds.find((x) => x >= d);
+    if (up != null) return { v: row.vals[up], exact: false }; // step up to next IE column (conservative)
+    const mx = ds[ds.length - 1], vm = row.vals[mx];
+    return { v: vm >= 1 ? ceil(vm * d / mx) : vm, exact: false };
+  }
+
+  // Team-note rule (only 100/250 known): exact at those points, linear otherwise
+  function evalTeam(t, d) {
+    const a = t.v100, b = t.v250;
+    if (a == null && b == null) return { v: 1, exact: false };
+    if (b == null || a == null) return { v: a ?? b, exact: true };
+    if (d === 100) return { v: a, exact: true };
+    if (d === 250) return { v: b, exact: true };
+    if (d < 100) return { v: a, exact: false };
+    return { v: Math.max(a, ceil(a + (b - a) * (d - 100) / 150)), exact: false };
+  }
+
+  function parseIE(XLSX, wb, fileName) {
+    for (const sn of wb.SheetNames) {
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: null });
+      let hr = -1, fc = -1;
+      for (let r = 0; r < Math.min(aoa.length, 30) && hr < 0; r++)
+        (aoa[r] || []).forEach((v, c) => { if (hr < 0 && /monthly\s*qty/i.test(String(v || ""))) { hr = r; fc = c; } });
+      if (hr < 0) continue;
+      const ie = { source: fileName, title: "", stages: {}, days: 20, pxeDiv: 8, demands: [], table: [] };
+      // title
+      for (let r = 0; r < hr; r++) for (const v of aoa[r] || []) if (v && !ie.title && typeof v === "string") ie.title = clean(v);
+      // demand headers (first occurrence wins)
+      const hdr = aoa[hr], cols = [], seen = new Set();
+      let noteCol = -1;
+      hdr.forEach((v, c) => {
+        if (c <= fc + 1) return;
+        if (/^note/i.test(String(v || ""))) noteCol = c;
+        const n = num(v);
+        if (n != null && n > 0 && !seen.has(n)) { seen.add(n); cols.push([c, n]); }
+      });
+      ie.demands = cols.map((x) => x[1]).sort((a, b) => a - b);
+      // try to infer UPD divisor from next row (e.g. 100 / 5 = 20)
+      const upd = aoa[hr + 1] || [];
+      if (cols.length && num(upd[cols[0][0]])) ie.days = Math.round(cols[0][1] / num(upd[cols[0][0]]));
+      // table rows
+      let lastFn = "";
+      for (let r = hr + 1; r < aoa.length; r++) {
+        const row = aoa[r] || [];
+        const fn = clean(row[fc]) || lastFn, st = clean(row[fc + 1]);
+        if (!st || /^upd$/i.test(clean(row[fc]))) continue;
+        if (/^(upd)$/i.test(fn)) continue;
+        lastFn = fn;
+        const id = mapKey(fn, st);
+        const vals = {};
+        cols.forEach(([c, d]) => { const n = num(row[c]); if (n != null) vals[d] = n; });
+        if (!Object.keys(vals).length) continue;
+        const nt = noteCol >= 0 ? clean(row[noteCol]) : "";
+        ie.table.push({ id, fn, st, kind: FORMULA_ROWS[id] || "table", vals, note: /^[-–—]*$/.test(nt) ? "" : nt });
+      }
+      // stage parameters (block to the left)
+      let stageRow = -1, stageCols = [];
+      for (let r = 0; r < aoa.length && stageRow < 0; r++)
+        (aoa[r] || []).forEach((v, c) => {
+          if (stageRow < 0 && /test\s*stage/i.test(String(v || ""))) {
+            stageRow = r;
+            for (let k = c + 1; k < fc; k++) { const s = clean(aoa[r][k]); if (s) stageCols.push([k, s.toUpperCase()]); }
+          }
+        });
+      if (stageRow >= 0) {
+        for (let r = stageRow + 1; r < aoa.length; r++) {
+          const row = aoa[r] || [];
+          const label = row.slice(0, stageCols.length ? stageCols[0][0] : 3).map((x) => String(x || "")).join(" ");
+          const pk = PARAM_KEYS.find(([re]) => re.test(label));
+          if (!pk) continue;
+          stageCols.forEach(([c, s]) => { ie.stages[s] = ie.stages[s] || {}; const n = num(row[c]); if (n != null) ie.stages[s][pk[1]] = n; });
+        }
+      }
+      const ok = ["L10", "L11", "BSL"].every((s) => ie.stages[s] && ["test", "handle", "work", "yield", "eff", "retest"].every((k) => ie.stages[s][k] != null));
+      if (!ok) return { error: "Found the demand table but could not read the L10 / L11 / BSL test parameters." };
+      addDerived(ie);
+      tabulate(ie);
+      return { ie };
+    }
+    return null;
+  }
+
+  // Turn every calculated row into plain per-demand values so IE can edit them like a table.
+  function tabulate(ie) {
+    const calc = ie.table.filter((r) => r.kind && r.kind !== "table");
+    if (!calc.length) return ie;
+    const snap = calc.map((r) => { const vals = {}; for (const d of ie.demands) vals[d] = evalLib(ie, r, d).v; return [r, vals]; });
+    for (const [r, vals] of snap) {
+      // keep values read from the calculator file where present
+      r.vals = Object.assign(vals, r.vals || {});
+      r.kind = "table"; delete r.value;
+    }
+    return ie;
+  }
+
+  function addDerived(ie) {
+    if (!ie.table.some((r) => r.id === "me|l11 + bsl"))
+      ie.table.push({ id: "me|l11 + bsl", fn: "ME", st: "L11 + BSL", kind: "l11bsl", vals: {}, note: "L11 + BSL station qty", derived: true });
+    if (!ie.table.some((r) => r.id === "any|general"))
+      ie.table.push({ id: "any|general", fn: "Any team", st: "General", kind: "const", value: 1, vals: {}, note: "Set to fulfil any demand", derived: true });
+  }
+
+  /* ---------------- Workbook detection & BOM parsing ---------------- */
+  function headerIndex(row) {
+    const ix = {};
+    (row || []).forEach((v, c) => {
+      const h = norm(v);
+      if (!h) return;
+      const set = (k) => { if (ix[k] == null) ix[k] = c; };
+      if (h === "function") set("fn");
+      else if (h === "station name") set("st");
+      else if (h === "station function") set("stfn");
+      else if (h.startsWith("quantity per station")) set("q");
+      else if (h === "item description") set("d");
+      else if (h === "qpn") set("qpn");
+      else if (h === "vendor") set("vendor");
+      else if (h === "alternative vendor") set("alt");
+      else if (h === "po type") set("po");
+      else if (h === "link") set("link");
+      else if (h === "price") set("price");
+      else if (h.includes("indicator") && h.includes("100")) set("i100");
+      else if (h.includes("indicator") && h.includes("250")) set("i250");
+      else if (h === "indicator") set("ind");
+      else if (h.includes("total") && h.includes("100")) set("t100");
+      else if (h.includes("total") && h.includes("250")) set("t250");
+      else if (h === "note" || h === "notes") set("note");
+      else if (h === "sheet name") set("sheetName");
+      else if (h === "leverage qty") set("lev");
+      else if (h.startsWith("qty buffer")) set("buf");
+      else if (h.startsWith("cost buffer")) set("costx");
+    });
+    return ix;
+  }
+  function findHeader(aoa, test) {
+    for (let r = 0; r < Math.min(aoa.length, 10); r++) { const ix = headerIndex(aoa[r]); if (test(ix)) return [r, ix]; }
+    return [-1, null];
+  }
+
+  function teamFromName(name) {
+    const m = String(name).replace(/\.xlsx?$/i, "").replace(/^\d+_*/, "").split(/[_\s]+/)[0];
+    return m || "Team";
+  }
+
+  function parseWorkbook(XLSX, wb, fileName) {
+    const out = { name: fileName, kind: "skip", team: "", sheets: [], rows: [], notes: [], warnings: [], skipped: [] };
+    const ieRes = parseIE(XLSX, wb, fileName);
+    if (ieRes && ieRes.ie) { out.kind = "ie"; out.ie = ieRes.ie; return out; }
+    if (ieRes && ieRes.error) { out.kind = "skip"; out.warnings.push(ieRes.error); return out; }
+
+    const pendingNotes = [];
+    for (const sn of wb.SheetNames) {
+      const aoa = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, raw: true, defval: null });
+      // Price list (e.g. Price_List sheet of a previous consolidation)
+      let [pr, pix] = findHeader(aoa, (ix) => ix.d != null && ix.price != null && ix.lev != null && ix.st == null);
+      if (pr >= 0) {
+        out.kind = "price"; out.price = out.price || {};
+        let n = 0;
+        for (let r = pr + 1; r < aoa.length; r++) {
+          const row = aoa[r] || []; const d = clean(row[pix.d]); if (!d) continue;
+          out.price[norm(d)] = {
+            price: num(row[pix.price]), lev: pix.lev != null ? num(row[pix.lev]) : null,
+            buffer: pix.buf != null ? num(row[pix.buf]) : null, costX: pix.costx != null ? num(row[pix.costx]) : null,
+          };
+          n++;
+        }
+        out.sheets.push({ name: sn, rows: n, role: "Price list" });
+        continue;
+      }
+      // BOM sheet
+      let [hr, ix] = findHeader(aoa, (ix) => ix.d != null && ix.st != null && ix.q != null);
+      if (hr >= 0 && ix.sheetName == null) {
+        let lastFn = "", n = 0, skippedBlank = 0;
+        for (let r = hr + 1; r < aoa.length; r++) {
+          const row = aoa[r] || [];
+          const d = clean(row[ix.d]);
+          const st = clean(row[ix.st]);
+          const qRaw = row[ix.q];
+          if (!d) { continue; }
+          if (!st && (qRaw == null || qRaw === "")) { skippedBlank++; continue; }
+          let fn = ix.fn != null ? clean(row[ix.fn]) : "";
+          let inherited = false;
+          if (!fn) { fn = lastFn; inherited = true; }
+          lastFn = fn || lastFn;
+          const q = num(qRaw);
+          let note = ix.note != null ? clean(row[ix.note]) : "";
+          const vendor = ix.vendor != null ? clean(row[ix.vendor]) : "";
+          if (ix.alt != null) { const a = clean(row[ix.alt]); if (a && norm(a) !== norm(vendor)) note = (note ? note + " | " : "") + "Alt vendor: " + a; }
+          out.rows.push({
+            file: fileName, sheet: sn, row: r + 1, fn, st: st || "General", fnInherited: inherited, stDefaulted: !st,
+            q: q == null ? 0 : q, qMissing: q == null, d,
+            qpn: ix.qpn != null ? clean(row[ix.qpn]) : "", vendor, po: ix.po != null ? clean(row[ix.po]) : "",
+            link: ix.link != null ? clean(row[ix.link]) : "", price: ix.price != null ? num(row[ix.price]) : null, note,
+            i100: ix.i100 != null ? num(row[ix.i100]) : null, i250: ix.i250 != null ? num(row[ix.i250]) : null,
+            t100: ix.t100 != null ? num(row[ix.t100]) : null, t250: ix.t250 != null ? num(row[ix.t250]) : null,
+          });
+          n++;
+        }
+        if (skippedBlank) out.warnings.push(`${sn}: skipped ${skippedBlank} line(s) with a description but no station or quantity.`);
+        out.sheets.push({ name: sn, rows: n, role: "BOM" });
+        continue;
+      }
+      // Indicator note sheet
+      let [nr, nix] = findHeader(aoa, (ix) => (ix.st != null || ix.stfn != null) && (ix.i100 != null || ix.ind != null) && ix.d == null);
+      if (nr >= 0) { pendingNotes.push([sn, aoa, nr, nix]); continue; }
+      out.skipped.push(sn);
+    }
+    if (out.rows.length) {
+      out.kind = "bom";
+      const cnt = {}; out.rows.forEach((r) => { if (r.fn) cnt[r.fn] = (cnt[r.fn] || 0) + 1; });
+      out.team = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0]?.[0] || teamFromName(fileName);
+      out.rows.forEach((r) => { if (!r.fn) { r.fn = out.team; r.fnInherited = true; } });
+    }
+    for (const [sn, aoa, nr, nix] of pendingNotes) {
+      let n = 0;
+      for (let r = nr + 1; r < aoa.length; r++) {
+        const row = aoa[r] || [];
+        let fn = out.team || teamFromName(fileName), st;
+        if (nix.st != null && nix.stfn != null) { fn = clean(row[nix.stfn]) || fn; st = clean(row[nix.st]); }
+        else st = clean(row[nix.st != null ? nix.st : nix.stfn]);
+        if (!st) continue;
+        const v100 = num(nix.i100 != null ? row[nix.i100] : row[nix.ind]);
+        const v250 = num(nix.i250 != null ? row[nix.i250] : row[nix.ind]);
+        if (v100 == null && v250 == null) continue;
+        out.notes.push({ fn, st, v100, v250, note: nix.note != null ? clean(row[nix.note]) : "" });
+        n++;
+      }
+      out.sheets.push({ name: sn, rows: n, role: "Indicator note" });
+    }
+    if (out.kind === "skip" && !out.warnings.length)
+      out.warnings.push("No BOM sheet found (needs Item Description, Station Name and Quantity Per Station columns).");
+    return out;
+  }
+
+  /* ---------------- Indicator mapping ---------------- */
+  const DEFAULT_ALIASES = {
+    "pl|general": "pe|general",
+    "me|total test station": "me|total",
+  };
+  const STATION_ALIASES = { "l11 + bsl": "me|l11 + bsl", "total test station": "me|total" };
+
+  function defaultRule(ie, fn, st, fileTeam) {
+    const k = mapKey(fn, st);
+    const has = (id) => ie.table.some((r) => r.id === id);
+    if (has(k)) return { rule: "ie:" + k, why: "match" };
+    if (DEFAULT_ALIASES[k] && has(DEFAULT_ALIASES[k])) return { rule: "ie:" + DEFAULT_ALIASES[k], why: "alias" };
+    const sa = STATION_ALIASES[norm(st)];
+    if (sa && has(sa)) return { rule: "ie:" + sa, why: "alias" };
+    if (fileTeam && has(mapKey(fileTeam, st))) return { rule: "ie:" + mapKey(fileTeam, st), why: "file team" };
+    if (norm(st) === "general" && has("any|general")) return { rule: "ie:any|general", why: "general" };
+    return { rule: null, why: "not in IE standard" };
+  }
+
+  // Add an empty IE row for every BOM station the IE standard does not cover yet (IE fills it in).
+  // Also drops empty added rows that no BOM uses any more.
+  function ensureIE(state) {
+    const ie = state.ie, used = new Set();
+    for (const f of state.files) {
+      if (f.kind !== "bom") continue;
+      for (const r of f.rows) {
+        const k = mapKey(r.fn, r.st);
+        if (used.has(k)) continue;
+        used.add(k);
+        const ov = state.mapOverrides[k];
+        if (ov && ov.rule && ov.rule.startsWith("ie:") && ie.table.some((x) => x.id === ov.rule.slice(3))) continue;
+        if (defaultRule(ie, r.fn, r.st, f.team).rule) continue;
+        if (!state.autoAddIE) continue;
+        ie.table.push({ id: k, fn: r.fn, st: r.st, kind: "table", vals: {}, note: "Added for IE to fill in", added: true });
+      }
+    }
+    ie.table = ie.table.filter((x) => !x.added || used.has(x.id) || Object.keys(x.vals || {}).length);
+  }
+
+  function libLabel(r) { return `${r.fn} · ${r.st}${r.note ? " — " + r.note : ""}`; }
+
+  function buildMapping(state) {
+    const ie = state.ie;
+    const pairs = new Map();
+    const teamNotes = new Map();
+    for (const f of state.files) {
+      if (f.kind !== "bom") continue;
+      for (const n of f.notes) {
+        teamNotes.set(mapKey(n.fn, n.st), n);
+        if (!teamNotes.has(mapKey(f.team, n.st))) teamNotes.set(mapKey(f.team, n.st), n);
+      }
+    }
+    for (const f of state.files) {
+      if (f.kind !== "bom") continue;
+      for (const r of f.rows) {
+        const k = mapKey(r.fn, r.st);
+        let p = pairs.get(k);
+        if (!p) { p = { key: k, fn: r.fn, st: r.st, rows: 0, teams: new Set(), bom100: null, bom250: null, file: f.name, fileTeam: f.team }; pairs.set(k, p); }
+        p.rows++; p.teams.add(f.team);
+        if (p.bom100 == null && r.i100 != null) p.bom100 = r.i100;
+        if (p.bom250 == null && r.i250 != null) p.bom250 = r.i250;
+        if (!p.note) p.note = teamNotes.get(k) || teamNotes.get(mapKey(f.team, r.st)) || null;
+      }
+    }
+    const list = [...pairs.values()];
+    list.forEach((p) => {
+      const def = defaultRule(ie, p.fn, p.st, p.fileTeam);
+      const ov = state.mapOverrides[p.key];
+      const ovOk = ov && ov.rule && ov.rule.startsWith("ie:") && ie.table.some((r) => r.id === ov.rule.slice(3));
+      p.defaultRule = def.rule || "none";
+      p.rule = ovOk ? ov.rule : p.defaultRule;
+      p.manualA = ov && ov.a != null ? ov.a : null;
+      p.manualB = ov && ov.b != null ? ov.b : null;
+      p.team100 = p.note ? p.note.v100 : p.bom100;
+      p.team250 = p.note ? p.note.v250 : p.bom250;
+      const res = (d, which) => resolveRule(state, p, d, which);
+      const a = res(state.demandA, "a"), b = res(state.demandB, "b");
+      p.indA = a.v; p.indB = b.v; p.exactA = a.exact; p.exactB = b.exact; p.basis = a.basis; p.source = a.source;
+      p.missing = !!(a.missing || b.missing);
+      p.notInIE = !!a.notInIE;
+      p.ieRow = p.notInIE ? null : ie.table.find((r) => "ie:" + r.id === p.rule);
+      const c100 = res(100, "a"), c250 = res(250, "b");
+      p.ie100 = c100.v; p.ie250 = c250.v;
+      p.mismatch = (p.team100 != null && p.ie100 !== p.team100) || (p.team250 != null && p.ie250 !== p.team250);
+    });
+    // Follow the IE standard table order; unmatched stations go last.
+    const pos = (p) => { const i = p.ieRow ? ie.table.indexOf(p.ieRow) : -1; return i < 0 ? 1e9 : i; };
+    list.sort((a, b) => pos(a) - pos(b) || a.fn.localeCompare(b.fn) || a.st.localeCompare(b.st));
+    list.forEach((p, i) => { p.id = i + 1; });
+    return { list, byKey: new Map(list.map((p) => [p.key, p])) };
+  }
+
+  function resolveRule(state, p, d, which) {
+    const ie = state.ie;
+    const id = p.rule ? p.rule.slice(3) : "";
+    const lib = ie.table.find((r) => r.id === id);
+    if (!lib) return { v: 0, exact: false, missing: true, notInIE: true, basis: "Not in IE standard", source: "IE standard" };
+    const r = evalLib(ie, lib, d);
+    return { ...r, basis: libLabel(lib), source: "IE standard" };
+  }
+
+  /* ---------------- Master / grouped / final ---------------- */
+  function compute(state) {
+    ensureIE(state);
+    const mapping = buildMapping(state);
+    const master = [];
+    for (const f of state.files) {
+      if (f.kind !== "bom") continue;
+      for (const r of f.rows) {
+        const p = mapping.byKey.get(mapKey(r.fn, r.st));
+        const totA = ceil(r.q * p.indA), totB = ceil(r.q * p.indB);
+        master.push({ ...r, team: f.team, mapId: p.id, indA: p.indA, indB: p.indB, totA, totB, key: norm(r.d) });
+      }
+    }
+    const gmap = new Map();
+    for (const m of master) {
+      let g = gmap.get(m.key);
+      if (!g) {
+        g = { key: m.key, d: m.d, variants: new Set(), qpns: new Set(), vendors: new Set(), pos: new Set(), links: [], prices: new Set(),
+          fns: new Set(), fss: new Set(), sumA: 0, sumB: 0, lines: [] };
+        gmap.set(m.key, g);
+      }
+      g.variants.add(m.d);
+      if (m.qpn && !/^(0|na|n\/a|x+)$/i.test(m.qpn)) g.qpns.add(m.qpn);
+      if (m.vendor) g.vendors.add(m.vendor);
+      if (m.po) g.pos.add(m.po);
+      if (m.link && !g.links.includes(m.link)) g.links.push(m.link);
+      if (m.price != null && m.price > 0) g.prices.add(m.price);
+      g.fns.add(`${m.fn} - ${m.st}`);
+      g.fss.add(`${m.fn} - ${m.st} - ${m.sheet}`);
+      g.sumA += m.totA; g.sumB += m.totB; g.lines.push(m);
+    }
+    const groups = [...gmap.values()].sort((a, b) => a.d.localeCompare(b.d, undefined, { sensitivity: "base" }));
+    const price = state.priceList || {};
+    groups.forEach((g, i) => {
+      g.id = i + 1;
+      g.qpn = [...g.qpns][0] || "";
+      g.vendor = [...g.vendors][0] || "";
+      g.po = [...g.pos][0] || "";
+      g.link = (g.links.find((l) => /^https?:/i.test(l)) || g.links[0] || "");
+      const ps = [...g.prices];
+      g.bomPrice = ps.length ? Math.max(...ps) : null;
+      g.flags = [];
+      if (g.variants.size > 1) g.flags.push("Different spellings merged");
+      if (ps.length > 1) g.flags.push(`Different prices ${fmtN(Math.min(...ps))}–${fmtN(Math.max(...ps))}`);
+      if (g.vendors.size > 1) g.flags.push("Different vendors");
+      if (g.qpns.size > 1) g.flags.push("Different QPNs");
+      g.functions = [...g.fns].sort().join(", ");
+      g.fssText = [...g.fss].sort().join(", ");
+      // Final layer
+      const s = state.settings;
+      const it = state.items[g.key] || {};
+      const pl = price[g.key] || {};
+      const pick = (a, b, c) => (a != null ? a : b != null ? b : c);
+      g.local = localRule(g.vendor, s.localKeywords);
+      g.price = pick(it.price, pl.price, g.bomPrice);
+      g.priceSrc = it.price != null ? "edited" : pl.price != null ? "price list" : g.bomPrice != null ? "BOM" : "missing";
+      g.buffer = pick(it.buffer, pl.buffer, s.buffer);
+      g.lev = pick(it.lev, pl.lev, 0);
+      g.costX = pick(it.costX, pl.costX, g.local ? s.localX : s.intlX);
+      g.remark = it.remark || "";
+      g.unitCost = (g.price || 0) * g.costX;
+      g.calcA = Math.max(0, ceil(g.sumA * (1 + g.buffer) - g.lev));
+      g.calcB = Math.max(0, ceil(g.sumB * (1 + g.buffer) - g.lev));
+      g.ovA = it.qtyA != null ? it.qtyA : null;
+      g.ovB = it.qtyB != null ? it.qtyB : null;
+      g.qtyA = g.ovA != null ? g.ovA : g.calcA;
+      g.qtyB = g.ovB != null ? g.ovB : g.calcB;
+      g.costA = g.qtyA * g.unitCost;
+      g.costB = g.qtyB * g.unitCost;
+    });
+    const totals = groups.reduce((t, g) => {
+      t.costA += g.costA; t.costB += g.costB; t.qtyA += g.qtyA; t.qtyB += g.qtyB;
+      if (g.price == null) t.noPrice++;
+      return t;
+    }, { costA: 0, costB: 0, qtyA: 0, qtyB: 0, noPrice: 0 });
+    totals.missingIE = mapping.list.filter((p) => p.missing).length;
+    return { mapping, master, groups, totals };
+  }
+
+  function localRule(vendor, kw) {
+    const words = String(kw || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+    const v = String(vendor || "").toLowerCase();
+    return words.some((w) => v.includes(w));
+  }
+  function fmtN(n) { return Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 }); }
+
+  /* ---------------- Excel export (ExcelJS) ---------------- */
+  async function exportWorkbook(ExcelJS, state, C) {
+    const wb = new ExcelJS.Workbook();
+    wb.creator = "NRE functional BOM list"; wb.created = new Date();
+    const A = state.demandA, B = state.demandB, ie = state.ie;
+    const FONT = "Arial", font = { name: FONT, size: 10 };
+    const WARN = "FFFFF1C2", INPUT = "FF1D4ED8", LINE = "FFD0D5DD";
+    const GRP = {
+      base: { h: "FF1F3B5C", c: null, s: null },
+      cost: { h: "FF2F6B4F", c: "FFEEF6F1", s: "FFD9EDE0" },
+      A: { h: "FF1F4E8C", c: "FFEDF3FB", s: "FFD3E3F8" },
+      B: { h: "FF8A5A12", c: "FFFDF5E8", s: "FFF8E2BE" },
+    };
+    const fill = (argb) => ({ type: "pattern", pattern: "solid", fgColor: { argb } });
+    const L = (n) => { let s = ""; n++; while (n > 0) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+    const F = (formula, result) => ({ formula, result });
+
+    // cols: {h, k, w, fmt, input, grp, strong, hidden}
+    function sheet(name, cols, rows, opts = {}) {
+      const ws = wb.addWorksheet(name, { views: [{ state: "frozen", ySplit: 1, xSplit: opts.xSplit || 0 }] });
+      ws.columns = cols.map((c) => ({ width: c.w, hidden: !!c.hidden }));
+      const hr = ws.getRow(1); hr.height = 34;
+      cols.forEach((c, i) => {
+        const cell = hr.getCell(i + 1); cell.value = c.h;
+        cell.font = { name: FONT, size: 10, bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = fill(GRP[c.grp || "base"].h);
+        cell.alignment = { vertical: "middle", horizontal: c.fmt ? "right" : "left", wrapText: true };
+      });
+      rows.forEach((r, ri) => {
+        const n = ri + 2, row = ws.getRow(n);
+        cols.forEach((c, i) => {
+          const cell = row.getCell(i + 1);
+          cell.value = r[c.k] === undefined ? null : r[c.k];
+          cell.font = { ...font, bold: !!c.strong, color: c.input ? { argb: INPUT } : undefined };
+          if (c.fmt) cell.numFmt = c.fmt;
+          const g = GRP[c.grp || "base"]; const bg = c.strong ? g.s : g.c;
+          if (bg) cell.fill = fill(bg);
+          cell.border = { bottom: { style: "hair", color: { argb: LINE } } };
+          if (c.wrap) cell.alignment = { wrapText: true, vertical: "top" };
+        });
+        if (opts.onRow) opts.onRow(row, r, n, (k) => cols.findIndex((c) => c.k === k) + 1);
+      });
+      ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1 + rows.length, column: cols.length } };
+      return ws;
+    }
+    const colL = (cols, k) => L(cols.findIndex((c) => c.k === k));
+
+    // ---- Summary (filled in at the end)
+    const sum = wb.addWorksheet("Summary");
+
+    // ---- IE Indicators (single editable source)
+    const ieVal = (r, d) => { const x = evalLib(ie, r, d); return x.missing ? null : x.v; };
+    const ieIdx = new Map(ie.table.map((r, i) => [r, i + 1]));
+    const iCols = [{ h: "Function", k: "fn", w: 12 }, { h: "Station Name", k: "st", w: 24 },
+      { h: `Indicator ${A}r/m`, k: "a", w: 15, fmt: "0.###", input: true, grp: "A" }, { h: `Indicator ${B}r/m`, k: "b", w: 15, fmt: "0.###", input: true, grp: "B" },
+      { h: "Note", k: "note", w: 18 }, { h: "BOM lines", k: "lines", w: 11, fmt: "#,##0" }];
+    const nIE = ie.table.length + 1;
+    const mCols = [{ h: "Group ID", k: "gid", w: 6, hidden: true }, { h: "IE Row", k: "ieRow", w: 6, hidden: true },
+      { h: "Source file", k: "file", w: 24 }, { h: "Sheet", k: "sheet", w: 20 }, { h: "Function", k: "fn", w: 11 }, { h: "Station Name", k: "st", w: 20 },
+      { h: "Quantity Per Station", k: "q", w: 11, fmt: "0.####" }, { h: "Item Description", k: "d", w: 46 }, { h: "QPN", k: "qpn", w: 16 },
+      { h: "Vendor", k: "vendor", w: 22 }, { h: "PO Type", k: "po", w: 12 }, { h: "Link", k: "link", w: 28 }, { h: "Price", k: "price", w: 12, fmt: "#,##0.00" },
+      { h: `Indicator ${A}r/m`, k: "indA", w: 12, fmt: "0.###", grp: "A" }, { h: `Total Qty ${A}r/m`, k: "totA", w: 12, fmt: "#,##0", grp: "A", strong: true },
+      { h: `Indicator ${B}r/m`, k: "indB", w: 12, fmt: "0.###", grp: "B" }, { h: `Total Qty ${B}r/m`, k: "totB", w: 12, fmt: "#,##0", grp: "B", strong: true },
+      { h: "Note", k: "note", w: 40 }];
+    const mLast = C.master.length + 1;
+    const mL = (k) => colL(mCols, k);
+    sheet("IE Indicators", iCols, ie.table.map((r, i) => ({ fn: r.fn, st: r.st, a: ieVal(r, A), b: ieVal(r, B), note: r.note || "-",
+      lines: C.master.filter((m) => { const p = C.mapping.list[m.mapId - 1]; return p && p.ieRow === r; }).length })), {
+      onRow: (row, r, n, col) => {
+        row.getCell(col("lines")).value = F(`COUNTIF(Master!$${mL("ieRow")}$2:$${mL("ieRow")}$${mLast},${n - 1})`, r.lines);
+        [col("a"), col("b")].forEach((k) => { if (row.getCell(k).value == null) row.getCell(k).fill = fill(WARN); });
+      },
+    });
+
+    // ---- Master
+    const gidByKey = new Map(C.groups.map((g) => [g.key, g.id]));
+    const mRows = C.master.map((m) => { const p = C.mapping.list[m.mapId - 1]; return { ...m, gid: gidByKey.get(m.key), ieRow: p && p.ieRow ? ieIdx.get(p.ieRow) : null }; });
+    sheet("Master", mCols, mRows, {
+      onRow: (row, r, n, col) => {
+        if (r.ieRow) {
+          row.getCell(col("indA")).value = F(`N(INDEX('IE Indicators'!$C$2:$C$${nIE},${mL("ieRow")}${n}))`, r.indA);
+          row.getCell(col("indB")).value = F(`N(INDEX('IE Indicators'!$D$2:$D$${nIE},${mL("ieRow")}${n}))`, r.indB);
+        }
+        if (!r.ieRow || C.mapping.list[r.mapId - 1].missing) { row.getCell(col("indA")).fill = fill(WARN); row.getCell(col("indB")).fill = fill(WARN); }
+        row.getCell(col("totA")).value = F(`ROUNDUP(${mL("q")}${n}*${mL("indA")}${n},0)`, r.totA);
+        row.getCell(col("totB")).value = F(`ROUNDUP(${mL("q")}${n}*${mL("indB")}${n},0)`, r.totB);
+        if (r.price == null) row.getCell(col("price")).fill = fill(WARN);
+      },
+    });
+
+    // ---- Grouped
+    const gCols = [{ h: "Group ID", k: "id", w: 6, hidden: true }, { h: "Item Description", k: "d", w: 46 }, { h: "Warning", k: "flagText", w: 30, wrap: true },
+      { h: "QPN", k: "qpn", w: 16 }, { h: "Vendor", k: "vendor", w: 22 }, { h: "PO Type", k: "po", w: 12 }, { h: "Link", k: "link", w: 28 },
+      { h: "Price (BOM)", k: "bomPrice", w: 12, fmt: "#,##0.00" }, { h: "Function - Station", k: "functions", w: 34, wrap: true },
+      { h: "Function - Station - Sheet", k: "fssText", w: 42, wrap: true },
+      { h: `Sum Qty ${A}r/m`, k: "sumA", w: 12, fmt: "#,##0", grp: "A", strong: true }, { h: `Sum Qty ${B}r/m`, k: "sumB", w: 12, fmt: "#,##0", grp: "B", strong: true },
+      { h: "BOM lines", k: "nLines", w: 10, fmt: "#,##0" }];
+    const gRows = C.groups.map((g) => ({ ...g, nLines: g.lines.length, flagText: g.flags.join("; ") }));
+    const gLast = C.groups.length + 1, gL = (k) => colL(gCols, k);
+    sheet("Grouped", gCols, gRows, {
+      xSplit: 2,
+      onRow: (row, r, n, col) => {
+        row.getCell(col("sumA")).value = F(`SUMIFS(Master!$${mL("totA")}$2:$${mL("totA")}$${mLast},Master!$A$2:$A$${mLast},$A${n})`, r.sumA);
+        row.getCell(col("sumB")).value = F(`SUMIFS(Master!$${mL("totB")}$2:$${mL("totB")}$${mLast},Master!$A$2:$A$${mLast},$A${n})`, r.sumB);
+        row.getCell(col("nLines")).value = F(`COUNTIF(Master!$A$2:$A$${mLast},$A${n})`, r.nLines);
+        if (r.flags.length) row.getCell(col("flagText")).fill = fill(WARN);
+        if (r.bomPrice == null) row.getCell(col("bomPrice")).fill = fill(WARN);
+      },
+    });
+
+    // ---- Final
+    const fCols = [{ h: "Group ID", k: "id", w: 6, hidden: true }, { h: "Item Description", k: "d", w: 44, wrap: true }, { h: "QPN", k: "qpn", w: 16 },
+      { h: "Vendor", k: "vendor", w: 22 }, { h: "Function - Station", k: "functions", w: 30, wrap: true }, { h: "Link", k: "link", w: 24 },
+      { h: "Local / International", k: "li", w: 13 }, { h: "PO Type", k: "po", w: 12 },
+      { h: "Buffer Rate", k: "buffer", w: 9, fmt: "0%", input: true }, { h: "Leverage Qty", k: "lev", w: 10, fmt: "#,##0", input: true },
+      { h: "Unit Price", k: "price", w: 12, fmt: "#,##0.00", input: true, grp: "cost" }, { h: "Cost Markup", k: "costX", w: 10, fmt: "0.00", input: true, grp: "cost" },
+      { h: "Overall Unit Cost", k: "unitCost", w: 13, fmt: "#,##0.00", grp: "cost", strong: true },
+      { h: `Sum Qty ${A}r/m`, k: "sumA", w: 11, fmt: "#,##0", grp: "A" }, { h: `Calc Qty ${A}r/m`, k: "calcA", w: 11, fmt: "#,##0", grp: "A" },
+      { h: `Qty Override ${A}r/m`, k: "ovA", w: 11, fmt: "#,##0", input: true, grp: "A" },
+      { h: `Final Qty ${A}r/m`, k: "qtyA", w: 11, fmt: "#,##0", grp: "A", strong: true }, { h: `Total Price ${A}r/m`, k: "costA", w: 15, fmt: "$#,##0", grp: "A", strong: true },
+      { h: `Sum Qty ${B}r/m`, k: "sumB", w: 11, fmt: "#,##0", grp: "B" }, { h: `Calc Qty ${B}r/m`, k: "calcB", w: 11, fmt: "#,##0", grp: "B" },
+      { h: `Qty Override ${B}r/m`, k: "ovB", w: 11, fmt: "#,##0", input: true, grp: "B" },
+      { h: `Final Qty ${B}r/m`, k: "qtyB", w: 11, fmt: "#,##0", grp: "B", strong: true }, { h: `Total Price ${B}r/m`, k: "costB", w: 15, fmt: "$#,##0", grp: "B", strong: true },
+      { h: "Capex comment", k: "remark", w: 30, input: true, wrap: true }];
+    const fL = (k) => colL(fCols, k);
+    const fRows = C.groups.map((g) => ({ ...g, li: g.local ? "Local" : "International" }));
+    const fws = sheet("Final", fCols, fRows, {
+      xSplit: 2,
+      onRow: (row, r, n, col) => {
+        const set = (k, f, v) => { row.getCell(col(k)).value = F(f, v); };
+        set("sumA", `INDEX(Grouped!$${gL("sumA")}$2:$${gL("sumA")}$${gLast},MATCH($A${n},Grouped!$A$2:$A$${gLast},0))`, r.sumA);
+        set("sumB", `INDEX(Grouped!$${gL("sumB")}$2:$${gL("sumB")}$${gLast},MATCH($A${n},Grouped!$A$2:$A$${gLast},0))`, r.sumB);
+        set("unitCost", `${fL("price")}${n}*${fL("costX")}${n}`, r.unitCost);
+        set("calcA", `MAX(0,ROUNDUP(${fL("sumA")}${n}*(1+${fL("buffer")}${n})-${fL("lev")}${n},0))`, r.calcA);
+        set("calcB", `MAX(0,ROUNDUP(${fL("sumB")}${n}*(1+${fL("buffer")}${n})-${fL("lev")}${n},0))`, r.calcB);
+        set("qtyA", `IF(${fL("ovA")}${n}="",${fL("calcA")}${n},${fL("ovA")}${n})`, r.qtyA);
+        set("qtyB", `IF(${fL("ovB")}${n}="",${fL("calcB")}${n},${fL("ovB")}${n})`, r.qtyB);
+        set("costA", `${fL("qtyA")}${n}*${fL("unitCost")}${n}`, r.costA);
+        set("costB", `${fL("qtyB")}${n}*${fL("unitCost")}${n}`, r.costB);
+        if (r.price == null) row.getCell(col("price")).fill = fill(WARN);
+      },
+    });
+    const fLast = C.groups.length + 1, tr = fLast + 1;
+    const tRow = fws.getRow(tr);
+    tRow.getCell(2).value = "Total";
+    for (const k of ["qtyA", "costA", "qtyB", "costB"]) {
+      const idx = fCols.findIndex((c) => c.k === k), cell = tRow.getCell(idx + 1);
+      cell.value = F(`SUBTOTAL(9,${fL(k)}2:${fL(k)}${fLast})`, C.totals[k]);
+      cell.numFmt = fCols[idx].fmt; cell.fill = fill(GRP[fCols[idx].grp].s);
+    }
+    tRow.eachCell({ includeEmpty: true }, (c) => { c.font = { name: FONT, size: 11, bold: true }; c.border = { top: { style: "medium", color: { argb: "FF1F3B5C" } } }; });
+    fws.autoFilter = { from: { row: 1, column: 1 }, to: { row: fLast, column: fCols.length } };
+
+    // ---- Summary
+    sum.columns = [{ width: 32 }, { width: 22 }, { width: 22 }];
+    const put = (r, vals, style = {}) => { const row = sum.getRow(r); vals.forEach((v, i) => { const c = row.getCell(i + 1); c.value = v; c.font = { ...font, ...style }; }); return row; };
+    put(1, [state.project || "NRE"], { size: 18, bold: true });
+    put(2, ["NRE functional BOM list"], { size: 11, color: { argb: "FF5B6472" } });
+    const _d = new Date();
+    put(3, [`Generated ${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`], { color: { argb: "FF5B6472" } });
+    const h = put(5, ["", `Demand A: ${A}r/m`, `Demand B: ${B}r/m`], { bold: true, color: { argb: "FFFFFFFF" } });
+    h.getCell(2).fill = fill(GRP.A.h); h.getCell(3).fill = fill(GRP.B.h); h.getCell(2).alignment = h.getCell(3).alignment = { horizontal: "right" };
+    const tot = put(6, ["Total NRE", F(`Final!${fL("costA")}${tr}`, C.totals.costA), F(`Final!${fL("costB")}${tr}`, C.totals.costB)], { size: 14, bold: true });
+    tot.height = 24; tot.getCell(2).numFmt = tot.getCell(3).numFmt = "$#,##0"; tot.getCell(2).fill = fill(GRP.A.s); tot.getCell(3).fill = fill(GRP.B.s);
+    const q = put(7, ["Final Qty (all items)", F(`Final!${fL("qtyA")}${tr}`, C.totals.qtyA), F(`Final!${fL("qtyB")}${tr}`, C.totals.qtyB)]);
+    q.getCell(2).numFmt = q.getCell(3).numFmt = "#,##0";
+    put(9, ["Items", C.groups.length]);
+    put(10, ["BOM lines", C.master.length]);
+    put(11, ["Items without a price", C.totals.noPrice]);
+    put(12, ["Stations without an IE value", C.totals.missingIE]);
+
+    return wb.xlsx.writeBuffer();
+  }
+
+  /* ---------------- BOM template (ExcelJS + JSZip) ---------------- */
+  // One Excel Table per team. Indicator / Total are table calculated columns, so rows added
+  // by typing below the table get the formulas automatically. IE indicators sit in a protected table.
+  async function exportTemplate(ExcelJS, JSZip, state, team, sheets, blankRows = 50) {
+    const A = state.demandA, B = state.demandB, ie = state.ie;
+    const wb = new ExcelJS.Workbook();
+    wb.creator = "NRE functional BOM list"; wb.created = new Date();
+    const font = { name: "Arial", size: 10 };
+    const tag = String(team).replace(/[^A-Za-z0-9]/g, "") || "Team";
+    const ieT = "IE_" + tag;
+    const rowsIE = ie.table.filter((r) => norm(r.fn) === norm(team));
+    const ieVal = (r, d) => { const x = evalLib(ie, r, d); return x.missing ? null : x.v; };
+    const hA = `Indicator for ${A}r/m`, hB = `Indicator for ${B}r/m`, tA = `Total Qty for ${A}r/m`, tB = `Total Qty for ${B}r/m`;
+
+    // BOM sheets first (same tabs as the team's BOM file), then the IE indicator sheet
+    const layout = (sheets && sheets.length ? sheets : [{ name: `${team} BOM`, fn: team }]);
+    const used = new Set(["0_ie indicator"]);
+    const safeName = (s) => {
+      let base = String(s).replace(/[\[\]:*?\/\\]/g, " ").trim().slice(0, 31) || "BOM", n = base, i = 2;
+      while (used.has(n.toLowerCase())) { n = base.slice(0, 28) + " " + i++; }
+      used.add(n.toLowerCase()); return n;
+    };
+    const bomSheets = layout.map((L, i) => ({ ws: wb.addWorksheet(safeName(L.name), { views: [{ state: "frozen", ySplit: 1 }] }), fn: L.fn || team, table: `BOM_${tag}_${i + 1}` }));
+    const iws = wb.addWorksheet("0_IE indicator", { views: [{ state: "frozen", ySplit: 1 }] });
+
+    // IE indicator table (protected)
+    iws.columns = [{ width: 12 }, { width: 26 }, { width: 18 }, { width: 18 }, { width: 22 }];
+    iws.addTable({ name: ieT, ref: "A1", headerRow: true, style: { theme: "TableStyleMedium15", showRowStripes: true },
+      columns: [{ name: "Function" }, { name: "Station Name" }, { name: hA }, { name: hB }, { name: "Note" }],
+      rows: (rowsIE.length ? rowsIE : [{ fn: team, st: "", note: "" }]).map((r) => [r.fn, r.st, r.st ? ieVal(r, A) : null, r.st ? ieVal(r, B) : null, r.note || "-"]) });
+    iws.eachRow((row) => row.eachCell((c) => { c.font = { ...font, bold: row.number === 1 }; }));
+    const nI = Math.max(rowsIE.length, 1) + 1;
+    const nr = iws.getRow(nI + 2).getCell(1);
+    nr.value = "Filled in by IE. Do not edit. Pick a Station Name from this list in the BOM sheet."; nr.font = { ...font, italic: true };
+    await iws.protect("", { selectLockedCells: true, selectUnlockedCells: true });
+
+    // BOM tables: blank rows, Function pre-filled, formulas in the calculated columns
+    const heads = ["Function", "Station Name", "Quantity Per Station", "Item Description", "QPN", "Vendor", "PO Type", "Link", "Price", hA, tA, hB, tB, "Note"];
+    const widths = [11, 22, 12, 44, 16, 22, 12, 30, 11, 14, 14, 14, 14, 36];
+    const q = (h) => h.replace(/([\[\]#'])/g, "'$1");
+    const calcFor = (T) => {
+      const me = (h) => `${T}[[#This Row],[${q(h)}]]`;
+      return {
+        [hA]: `IFERROR(INDEX(${ieT}[${q(hA)}],MATCH(${me("Station Name")},${ieT}[Station Name],0)),"")`,
+        [tA]: `IF(OR(${me("Quantity Per Station")}="",${me(hA)}=""),"",ROUNDUP(${me("Quantity Per Station")}*${me(hA)},0))`,
+        [hB]: `IFERROR(INDEX(${ieT}[${q(hB)}],MATCH(${me("Station Name")},${ieT}[Station Name],0)),"")`,
+        [tB]: `IF(OR(${me("Quantity Per Station")}="",${me(hB)}=""),"",ROUNDUP(${me("Quantity Per Station")}*${me(hB)},0))`,
+      };
+    };
+    const calcByTable = {};
+    for (const { ws, fn, table } of bomSheets) {
+      const calc = calcFor(table); calcByTable[table] = calc;
+      ws.columns = widths.map((w) => ({ width: w }));
+      const rows = [];
+      for (let i = 0; i < blankRows; i++) rows.push(heads.map((h, k) => (k === 0 ? fn : calc[h] ? { formula: calc[h], result: "" } : null)));
+      ws.addTable({ name: table, ref: "A1", headerRow: true, style: { theme: "TableStyleMedium2", showRowStripes: true },
+        columns: heads.map((h) => ({ name: h, filterButton: true })), rows });
+      ws.getRow(1).height = 32;
+      ws.getRow(1).eachCell((c) => { c.font = { ...font, bold: true, color: { argb: "FFFFFFFF" } }; c.alignment = { vertical: "middle", wrapText: true }; });
+      for (let r = 2; r <= blankRows + 1; r++) {
+        const row = ws.getRow(r);
+        for (let k = 1; k <= heads.length; k++) { const cell = row.getCell(k); cell.font = k >= 10 && k <= 13 ? { ...font, color: { argb: "FF475467" } } : font; }
+        row.getCell(9).numFmt = "#,##0.00";
+      }
+      ws.dataValidations.add(`B2:B${blankRows + 1}`, { type: "list", allowBlank: true, formulae: [`'0_IE indicator'!$B$2:$B$${nI}`], showErrorMessage: true,
+        errorTitle: "Station Name", error: "Pick a Station Name from the list (0_IE indicator sheet)." });
+    }
+
+    // Post-process: mark the formula columns as table calculated columns
+    const buf = await wb.xlsx.writeBuffer();
+    const zip = await JSZip.loadAsync(buf);
+    for (const path of Object.keys(zip.files).filter((p) => /^xl\/tables\/table\d+\.xml$/.test(p))) {
+      let xml = await zip.file(path).async("string");
+      const T = (xml.match(/<table\b[^>]*\bname="([^"]+)"/) || [])[1];
+      const calc = calcByTable[T];
+      if (!calc) continue;
+      xml = xml.replace(/<tableColumn\b([^>]*?)(\/>|>([\s\S]*?)<\/tableColumn>)/g, (m, attrs, _end, inner) => {
+        const nm = (attrs.match(/name="([^"]*)"/) || [])[1];
+        const plain = nm && nm.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"');
+        if (!plain || !calc[plain]) return m;
+        const f = calc[plain].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return `<tableColumn${attrs}><calculatedColumnFormula>${f}</calculatedColumnFormula></tableColumn>`;
+      });
+      zip.file(path, xml);
+    }
+    return zip.generateAsync({ type: "uint8array" });
+  }
+
+  const api = { exportTemplate, tabulate, ensureIE, norm, clean, num, ceil, mapKey, tat, stageQty, evalLib, evalTeam, parseIE, addDerived, parseWorkbook, buildMapping, compute, exportWorkbook, libLabel, localRule };
+  if (typeof module !== "undefined" && module.exports) module.exports = api; else root.NRE = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+(function(){
+"use strict";
+const DEFAULT_IE = {"source": "IE standard table", "title": "", "demands": [200, 400], "table": [{"id": "me|l10", "fn": "ME", "st": "L10", "kind": "table", "vals": {"200": 26, "400": 51}, "note": "station qty"}, {"id": "me|l11", "fn": "ME", "st": "L11", "kind": "table", "vals": {"200": 31, "400": 62}, "note": "station qty"}, {"id": "me|bsl", "fn": "ME", "st": "BSL", "kind": "table", "vals": {"200": 7, "400": 13}, "note": "station qty"}, {"id": "me|total", "fn": "ME", "st": "Total", "kind": "table", "vals": {"200": 64, "400": 126}, "note": ""}, {"id": "me|station line", "fn": "ME", "st": "Station Line", "kind": "table", "vals": {"200": 4, "400": 8}, "note": ""}, {"id": "me|pxe line", "fn": "ME", "st": "PXE Line", "kind": "table", "vals": {"200": 4, "400": 8}, "note": "PXE qty"}, {"id": "me|l11 + bsl", "fn": "ME", "st": "L11 + BSL", "kind": "table", "vals": {"200": 38, "400": 75}, "note": "Subtotal"}, {"id": "me|general", "fn": "ME", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "me|filling machine", "fn": "ME", "st": "Filling Machine", "kind": "table", "vals": {"200": 4, "400": 8}, "note": "Machine qty"}, {"id": "me|filling manifold", "fn": "ME", "st": "Filling Manifold", "kind": "table", "vals": {"200": 1, "400": 2}, "note": "Machine qty"}, {"id": "me|melting machine", "fn": "ME", "st": "Melting Machine", "kind": "table", "vals": {"200": 0, "400": 0}, "note": "Machine qty"}, {"id": "to|general", "fn": "TO", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "to|l10 station", "fn": "TO", "st": "L10 Station", "kind": "table", "vals": {"200": 26, "400": 51}, "note": "Station qty"}, {"id": "to|l11 station", "fn": "TO", "st": "L11 Station", "kind": "table", "vals": {"200": 31, "400": 62}, "note": "Station qty"}, {"id": "to|bsl station", "fn": "TO", "st": "BSL Station", "kind": "table", "vals": {"200": 7, "400": 13}, "note": "Station qty"}, {"id": "to|test line", "fn": "TO", "st": "Test Line", "kind": "table", "vals": {"200": 4, "400": 8}, "note": "PXE Line qty"}, {"id": "to|filling", "fn": "TO", "st": "Filling", "kind": "table", "vals": {"200": 4, "400": 6}, "note": "QPL HC"}, {"id": "to|to qpl", "fn": "TO", "st": "TO QPL", "kind": "table", "vals": {"200": 18, "400": 33}, "note": "QPL HC"}, {"id": "pe|general", "fn": "PE", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "pe|travel card", "fn": "PE", "st": "Travel Card", "kind": "table", "vals": {"200": 2, "400": 2}, "note": "QPL HC"}, {"id": "pe|l10 material prep", "fn": "PE", "st": "L10 Material Prep", "kind": "table", "vals": {"200": 4, "400": 7}, "note": "QPL HC"}, {"id": "pe|l11 material prep", "fn": "PE", "st": "L11 Material Prep", "kind": "table", "vals": {"200": 7, "400": 14}, "note": "QPL HC"}, {"id": "pe|cable labeling", "fn": "PE", "st": "Cable Labeling", "kind": "table", "vals": {"200": 2, "400": 3}, "note": "QPL HC"}, {"id": "pe|l10 assy", "fn": "PE", "st": "L10 Assy", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Line qty"}, {"id": "pe|l11 assy", "fn": "PE", "st": "L11 Assy", "kind": "table", "vals": {"200": 9, "400": 17}, "note": "QPL HC"}, {"id": "pe|l11 racklink", "fn": "PE", "st": "L11 Racklink", "kind": "table", "vals": {"200": 2, "400": 3}, "note": "QPL HC"}, {"id": "pe|l11 cabling", "fn": "PE", "st": "L11 Cabling", "kind": "table", "vals": {"200": 5, "400": 9}, "note": "QPL HC"}, {"id": "pe|l10 hpt", "fn": "PE", "st": "L10 HPT", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "QPL HC"}, {"id": "pe|l11 hpt", "fn": "PE", "st": "L11 HPT", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "QPL HC"}, {"id": "pe|l11 packing", "fn": "PE", "st": "L11 Packing", "kind": "table", "vals": {"200": 2, "400": 4}, "note": "QPL HC"}, {"id": "pe|aoi machine", "fn": "PE", "st": "AOI Machine", "kind": "table", "vals": {"200": 2, "400": 3}, "note": "Machine qty"}, {"id": "debug|general", "fn": "Debug", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "debug|debug", "fn": "Debug", "st": "Debug", "kind": "table", "vals": {"200": 24, "400": 47}, "note": "QPL HC"}, {"id": "debug|test", "fn": "Debug", "st": "Test", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "PXE qty"}, {"id": "qe|general", "fn": "QE", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "qe|oba", "fn": "QE", "st": "OBA", "kind": "table", "vals": {"200": 2, "400": 4}, "note": "QPL HC"}, {"id": "qe|osv", "fn": "QE", "st": "OSV", "kind": "table", "vals": {}, "note": "QPL HC"}, {"id": "ie|general", "fn": "IE", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "es|general", "fn": "ES", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}, {"id": "shipping|general", "fn": "Shipping", "st": "General", "kind": "table", "vals": {"200": 1, "400": 1}, "note": "Fixed"}], "stages": {}, "days": 20, "pxeDiv": 8};
+const DEFAULT_SHEETS = {"PE":[{"name":"PE Team General BOM","fn":"PE"},{"name":"PL Team General BOM","fn":"PL"},{"name":"Cable Labeling","fn":"PE"},{"name":"AOI","fn":"PE"},{"name":"Travel Card","fn":"PE"},{"name":"L10 L11 Material Prep","fn":"PE"},{"name":"L10 Assy","fn":"PE"},{"name":"L11 Rack Assy","fn":"PE"},{"name":"L11 Racklink","fn":"PE"},{"name":"L11 Cabling","fn":"PE"},{"name":"L10 L11 HPT","fn":"PE"},{"name":"L11 Packing","fn":"PE"}],"Debug":[{"name":"Debug team general","fn":"Debug"},{"name":"Debug BOM","fn":"Debug"}],"ME":[{"name":"General","fn":"ME"},{"name":"Filling","fn":"ME"},{"name":"test hose","fn":"ME"},{"name":"ME L10","fn":"ME"},{"name":"ME L11","fn":"ME"},{"name":"ME BSL","fn":"ME"}],"QE":[{"name":"QE team BOM","fn":"QE"},{"name":"OBA BOM","fn":"QE"},{"name":"OSV BOM","fn":"QE"}],"TO":[{"name":"TO","fn":"TO"}],"IE":[{"name":"General BOM","fn":"IE"}],"ES":[{"name":"General BOM","fn":"ES"}],"Shipping":[{"name":"General BOM","fn":"Shipping"}]};
+const LS_KEY = "nre-bom-consolidation-v1";
+const $ = (s, r=document) => r.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const fInt = (n) => n == null ? "" : Math.round(n).toLocaleString("en-US");
+const fNum = (n, d=3) => n == null ? "" : Number(n).toLocaleString("en-US", {maximumFractionDigits:d});
+const fPrice = (n) => n == null ? "" : Number(n).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+const fMoney = (n) => n == null ? "" : "$" + Math.round(n).toLocaleString("en-US");
+const fShortMoney = (n) => { const a = Math.abs(n); return a >= 1e6 ? "$" + (n/1e6).toFixed(2) + "M" : a >= 1e3 ? "$" + (n/1e3).toFixed(1) + "k" : "$" + Math.round(n); };
+
+const defaults = () => ({ ieVersion:4, tab:"ie", project:"Everglades", demandA:200, demandB:400, ie:clone(DEFAULT_IE), files:[], mapOverrides:{}, items:{},
+  priceList:null, settings:{buffer:0.10, localX:1.3, intlX:1.75, localKeywords:"local, amazon"} });
+let S = load();
+S.priceList = null; S.files = (S.files || []).filter((f) => f.kind !== "price");
+if (S.ieVersion !== 4) { S.ie = clone(DEFAULT_IE); S.mapOverrides = {}; S.ieVersion = 4; S.demandA = 200; S.demandB = 400; S.tab = "ie"; S.files = S.files.filter((f) => f.kind !== "ie"); }
+S.mapOverrides = {};
+if (!["ie","tpl","upload","master","group","final"].includes(S.tab)) S.tab = "ie";
+for (const k of Object.keys(S.mapOverrides || {})) if (!String(S.mapOverrides[k].rule || "").startsWith("ie:")) delete S.mapOverrides[k];
+let C = null;
+const ui = { mSearch:"", mFn:"", gSearch:"", gFlag:false, open:new Set(), fSearch:"", fOnly:"", paste:false, nextFocus:false, sort:{} };
+
+function load(){
+  try { const s = localStorage.getItem(LS_KEY); if (s) { const o = JSON.parse(s); return Object.assign(defaults(), o, { settings:Object.assign(defaults().settings, o.settings || {}) }); } } catch(e){}
+  return defaults();
+}
+let saveT = null, saveWarned = false;
+function save(){
+  clearTimeout(saveT);
+  saveT = setTimeout(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(S)); }
+    catch(e){ if (!saveWarned){ saveWarned = true; toast("This session is too large to keep after a reload. Download the workbook before closing."); } }
+  }, 300);
+}
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 3800); }
+const boms = () => S.files.filter((f) => f.kind === "bom");
+function recompute(){ C = boms().length ? NRE.compute(S) : null; save(); }
+
+/* ---------- Header ---------- */
+function demandHint(d){
+  if (!(d > 0)) return ["Enter a monthly demand", true];
+  const n = S.ie.table.filter((r) => r.vals && r.vals[d] != null).length;
+  if (!n) return ["No IE values yet", true];
+  return ["From IE standard", false];
+}
+function renderHeader(){
+  $("#proj").value = S.project;
+  $("#dA").value = S.demandA; $("#dB").value = S.demandB;
+  $("#dlist").innerHTML = (S.ie.demands || []).map((d) => `<option value="${d}">`).join("");
+  $("#dlBtn").disabled = !C;
+  $("#dlHint").textContent = C ? `${C.groups.length} items, ${C.master.length} BOM lines` : "Upload BOMs first (step 3)";
+  const nb = ieBlanks();
+  const steps = [["ie","IE indicators", nb ? `${nb} blank` : `${S.ie.table.length} rows`], ["tpl","BOM templates", `${teamList().length} teams`],
+    ["upload","Upload BOMs", boms().length ? `${boms().length} files` : ""],
+    ["master","Master", C ? `${C.master.length} lines` : ""], ["group","Grouped", C ? `${C.groups.length} items` : ""], ["final","Final", C ? fShortMoney(C.totals.costB) : ""]];
+  $("#steps").innerHTML = steps.map(([k, label, c], i) => `<li><button data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ""}><span class="n">${i+1}</span>${label}${c ? ` <span class="c">${esc(c)}</span>` : ""}</button></li>`).join("");
+}
+$("#steps").addEventListener("click", (e) => { const b = e.target.closest("[data-tab]"); if (!b) return; S.tab = b.dataset.tab; save(); render(); window.scrollTo({top:0}); });
+$("#proj").addEventListener("change", (e) => { S.project = e.target.value.trim() || "NRE"; save(); });
+for (const [id, k] of [["#dA","demandA"],["#dB","demandB"]]) {
+  $(id).addEventListener("change", (e) => {
+    const v = Math.round(Number(String(e.target.value).replace(/[^\d.]/g, "")));
+    if (v > 0) { S[k] = v; save(); recompute(); render(); } else { e.target.value = S[k]; toast("Demand must be a positive number of racks per month."); }
+  });
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") e.target.blur(); });
+}
+
+/* ---------- 1. IE indicators ---------- */
+function missingBanner(){
+  if (!C || !C.totals.missingIE) return "";
+  const names = C.mapping.list.filter((p) => p.missing).map((p) => `${p.fn} ${p.st}`).join(", ");
+  return `<div class="note bad"><strong>${C.totals.missingIE === 1 ? "1 station needs" : C.totals.missingIE + " stations need"} an IE value:</strong> ${esc(names)}. Qty is 0 until IE fills them in. ${S.tab === "ie" ? "" : `<button class="btn link" data-tab-go="ie">Go to IE indicators</button>`}</div>`;
+}
+function ieBlanks(){ const A = S.demandA, B = S.demandB; return S.ie.table.filter((r) => !r.vals || r.vals[A] == null || r.vals[B] == null).length; }
+function renderIE(){
+  const ie = S.ie, A = S.demandA, B = S.demandB;
+  const vcell = (r, i, d) => { const v = r.vals ? r.vals[d] : null; return `<td class="num in ${v == null ? "blank" : ""}"><input class="cell-plain" data-iev="${i}|${d}" value="${v ?? ""}" aria-label="${esc(r.fn)} ${esc(r.st)} at ${d} r/m"></td>`; };
+  const tcell = (i, f, v, w, cls = "") => `<td class="in"><input class="cell-plain txt ${cls}" style="width:${w}px" data-ief="${i}|${f}" value="${esc(v)}" aria-label="${f}"></td>`;
+  const upd = (d) => fNum(d / 20, 2);
+  const body = ie.table.map((r, i) => `<tr>${tcell(i, "fn", r.fn, 110, "strong")}${tcell(i, "st", r.st, 190)}${vcell(r, i, A)}${vcell(r, i, B)}${tcell(i, "note", r.note || "", 150)}<td class="del"><button class="xbtn" data-iedel="${i}" aria-label="Delete ${esc(r.fn)} ${esc(r.st)}">✕</button></td></tr>`).join("");
+  const nb = ieBlanks();
+  return `
+  <h2>IE indicators</h2>
+  <p class="lede">IE enters each station's indicator for Demand A and B. Blank cells count as 0.</p>
+  ${nb ? `<div class="note warn">${nb} row${nb === 1 ? " is" : "s are"} blank (highlighted).</div>` : ""}
+  <div class="toolbar"><button class="btn small" id="pasteToggle">${ui.paste ? "Cancel paste" : "Paste from Excel"}</button><button class="btn small" id="ieAdd">Add row</button>
+    <span class="grow"></span><button class="btn small primary" data-tab-go="tpl">Next: BOM templates</button></div>
+  ${ui.paste ? `<div class="panel pad" style="margin-bottom:12px">
+    <p class="lede" style="margin-bottom:8px">Paste 5 columns from Excel: Function, Station, ${A}r/m, ${B}r/m, Note. This replaces the table.</p>
+    <textarea id="pasteBox" rows="10" style="width:100%;font:15px/1.4 var(--font);border:1px solid var(--rule-strong);border-radius:6px;padding:10px" placeholder="ME&#9;L10&#9;26&#9;51&#9;station qty"></textarea>
+    <div class="toolbar" style="margin-top:10px"><button class="btn small primary" id="pasteApply">Replace IE table</button><span class="count" id="pasteInfo"></span></div></div>` : ""}
+  <div class="tscroll" id="ieTable" style="max-height:none;width:max-content;max-width:100%"><table class="grid sheet">
+    <thead><tr><th colspan="2">Monthly qty</th><th class="num">${A}</th><th class="num">${B}</th><th>Note</th><th></th></tr>
+    <tr class="upd"><td colspan="2" class="strong" style="text-align:center">UPD</td><td class="num">${upd(A)}</td><td class="num">${upd(B)}</td><td class="dim">-</td><td></td></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+}
+function parsePasted(text){
+  const out = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    let f = line.split("\t");
+    if (f.length < 3) f = line.trim().split(/\s{2,}/);
+    const [fn, st, a, b, basis] = f.map((x) => (x ?? "").trim());
+    if (!fn || !st || /^upd$/i.test(fn) || /monthly/i.test(fn)) continue;
+    const na = a === "" ? null : Number(a.replace(/,/g, "")), nb = b === "" ? null : Number(b.replace(/,/g, ""));
+    if ((a !== "" && !isFinite(na)) || (b !== "" && !isFinite(nb))) { if (!out.length) continue; return {error:`Row "${fn} ${st}" has a value that isn't a number.`}; }
+    out.push({fn, st, a:na, b:nb, basis: basis === "-" ? "" : (basis || "")});
+  }
+  return {rows:out};
+}
+
+/* ---------- 2. Team templates ---------- */
+function teamList(){
+  const seen = new Map();
+  for (const r of S.ie.table) { const k = r.fn.trim().toLowerCase(); if (k && !seen.has(k)) seen.set(k, r.fn.trim()); }
+  return [...seen.values()];
+}
+// Same tabs as the team's BOM file: from uploaded BOMs if present, else the last known layout, else the built-in one.
+function teamSheets(team){
+  const k = team.toLowerCase();
+  const files = boms().filter((f) => (f.team || "").toLowerCase() === k);
+  if (files.length) {
+    const out = [];
+    for (const f of files) for (const s of f.sheets.filter((x) => x.role === "BOM")) {
+      const cnt = {}; f.rows.filter((r) => r.sheet === s.name).forEach((r) => { cnt[r.fn] = (cnt[r.fn] || 0) + 1; });
+      out.push({ name: s.name, fn: Object.entries(cnt).sort((a, b) => b[1] - a[1])[0]?.[0] || team });
+    }
+    if (out.length) { S.sheetLayout = S.sheetLayout || {}; S.sheetLayout[team] = out; return out; }
+  }
+  if (S.sheetLayout && S.sheetLayout[team]) return S.sheetLayout[team];
+  const d = Object.entries(DEFAULT_SHEETS).find(([t]) => t.toLowerCase() === k);
+  return d ? d[1] : [{ name: `${team} BOM`, fn: team }];
+}
+function renderTemplates(){
+  const A = S.demandA, B = S.demandB;
+  const rows = teamList().map((team) => {
+    const k = team.toLowerCase();
+    const blanks = S.ie.table.filter((r) => r.fn.trim().toLowerCase() === k && (!r.vals || r.vals[A] == null || r.vals[B] == null)).length;
+    const sh = teamSheets(team);
+    return `<tr><td class="strong">${esc(team)}${blanks ? ` <span class="tag warn">${blanks} IE value${blanks === 1 ? "" : "s"} blank</span>` : ""}</td>
+      <td class="wrap">${sh.map((s) => esc(s.name)).join(", ")} <span class="dim">(${sh.length} sheet${sh.length === 1 ? "" : "s"})</span></td>
+      <td><button class="btn small" data-tpl="${esc(team)}">Download</button></td></tr>`;
+  }).join("");
+  return `
+  <h2>BOM templates</h2>
+  <p class="lede">One Excel file per team, with the team's usual sheets. Pick a Station Name from the dropdown; Indicator and Total fill in automatically.</p>
+  <div class="note">Uses ${A}r/m and ${B}r/m. Re-download if IE changes the indicators.</div>
+  <div class="toolbar"><button class="btn small primary" id="tplAll">Download all templates (.zip)</button><span class="grow"></span><button class="btn small" data-tab-go="upload">Next: upload BOMs</button></div>
+  <div class="tscroll" style="max-height:none"><table class="grid mid-rows"><thead><tr><th style="min-width:160px">Team</th><th>Sheets</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- 3. Upload ---------- */
+function renderUpload(){
+  const rows = S.files.map((f, i) => {
+    const kind = {bom:"Team BOM", price:"Price list", skip:"Not used"}[f.kind] || "Not used";
+    const sheets = f.sheets.filter((s) => s.role !== "Indicator note").map((s) => `${esc(s.name)} <span class="dim">(${s.rows})</span>`).join("<br>");
+    const msgs = [...(f.warnings || []), ...(f.skipped && f.skipped.length && f.kind === "price" ? [`Ignored sheets: ${f.skipped.join(", ")}`] : [])];
+    return `<tr>
+      <td class="wrap strong">${esc(f.name)}</td>
+      <td><span class="tag ${f.kind === "skip" ? "warn" : f.kind === "bom" ? "" : "ok"}">${kind}</span></td>
+      <td>${esc(f.team || "")}</td>
+      <td class="wrap">${sheets || '<span class="dim">None</span>'}</td>
+      <td class="num">${f.kind === "bom" ? fInt(f.rows.length) : f.kind === "price" ? fInt(Object.keys(f.price || {}).length) : ""}</td>
+      <td class="wrap">${msgs.map((m) => `<div class="dim">${esc(m)}</div>`).join("")}</td>
+      <td><button class="xbtn" data-rm="${i}" aria-label="Remove ${esc(f.name)}">Remove</button></td></tr>`;
+  }).join("");
+  const dup = duplicateWarning();
+  const probs = C ? C.mapping.list.filter((p) => p.notInIE) : [];
+  return `
+  <h2>Upload BOMs</h2>
+  <p class="lede">Upload the completed BOM templates. A file with the same name replaces the earlier one.</p>
+  <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose BOM files to upload">
+    <strong>Drop BOM files here, or choose files</strong>
+    <p>Excel files (.xlsx)</p>
+  </div>
+  ${dup ? `<div class="note warn">${esc(dup)}</div>` : ""}
+  ${probs.length ? `<div class="note bad"><strong>Station names not in the IE table:</strong> ${probs.map((p) => `${esc(p.fn)} · ${esc(p.st)} (${p.rows} lines)`).join(", ")}. Add them in step 1 or correct the BOM.</div>` : ""}
+  ${missingBanner()}
+  ${S.files.length ? `
+  <div class="toolbar"><span class="count">${S.files.length} file${S.files.length === 1 ? "" : "s"} loaded</span><span class="grow"></span>
+    <button class="btn small" id="clearAll">Remove all files</button>
+    ${C ? `<button class="btn small primary" data-tab-go="master">Next: master</button>` : ""}</div>
+  <div class="tscroll" style="max-height:none"><table class="grid"><thead><tr><th>File</th><th>Read as</th><th>Team</th><th>Sheets read</th><th class="num">Lines</th><th>Notes</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}`;
+}
+function duplicateWarning(){
+  const seen = new Map();
+  for (const f of boms()) for (const s of f.sheets.filter((x) => x.role === "BOM")) {
+    const k = `${f.team}|${s.name}|${s.rows}`;
+    if (seen.has(k) && seen.get(k) !== f.name) return `Possible duplicate: sheet "${s.name}" (${f.team}, ${s.rows} lines) is in both ${seen.get(k)} and ${f.name}. Remove one so it isn't counted twice.`;
+    seen.set(k, f.name);
+  }
+  return "";
+}
+async function handleFiles(list){
+  if (!window.XLSX) { toast("The spreadsheet reader did not load. Check your connection and reload the page."); return; }
+  let added = 0;
+  for (const file of list) {
+    try {
+      const wb = XLSX.read(await file.arrayBuffer(), {type:"array"});
+      const p = NRE.parseWorkbook(XLSX, wb, file.name);
+      S.files = S.files.filter((f) => f.name !== file.name);
+      if (p.kind === "ie") S.files.push({name:p.name, kind:"skip", team:"", sheets:[], rows:[], notes:[], warnings:["IE calculator file: not used. Enter indicators in step 1."]});
+      else if (p.kind === "price") S.files.push({name:p.name, kind:"skip", team:"", sheets:[], rows:[], notes:[], warnings:["No BOM sheet found. Upload the team BOM templates."]});
+      else S.files.push(p);
+      added++;
+    } catch(err) {
+      S.files.push({name:file.name, kind:"skip", team:"", sheets:[], rows:[], notes:[], warnings:["Could not read this file: " + (err && err.message || err)]});
+    }
+  }
+  S.files.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric:true}));
+  save(); recompute(); render();
+  if (added) toast(`Read ${added} file${added === 1 ? "" : "s"}.`);
+}
+function removeFile(i){
+  const f = S.files[i];
+  S.files.splice(i, 1); save(); recompute(); render();
+}
+
+/* ---------- Master ---------- */
+function renderMaster(){
+  if (!C) return emptyState();
+  const A = S.demandA, B = S.demandB, q = ui.mSearch.toLowerCase();
+  const fns = [...new Set(C.master.map((m) => m.fn))].sort();
+  let rows = C.master.filter((m) => (!ui.mFn || m.fn === ui.mFn) &&
+    (!q || `${m.d} ${m.qpn} ${m.vendor} ${m.st} ${m.sheet} ${m.file}`.toLowerCase().includes(q)));
+  rows = applySort("master", rows, {file:(m) => m.file, sheet:(m) => m.sheet, fn:(m) => m.fn, st:(m) => m.st, q:(m) => m.q, d:(m) => m.d, qpn:(m) => m.qpn, vendor:(m) => m.vendor,
+    po:(m) => m.po, price:(m) => m.price, link:(m) => m.link, indA:(m) => m.indA, totA:(m) => m.totA, indB:(m) => m.indB, totB:(m) => m.totB, note:(m) => m.note});
+  const total = rows.length, LIMIT = 1500; rows = rows.slice(0, LIMIT);
+  const html = rows.map((m) => {
+    const p = C.mapping.list[m.mapId - 1], bad = p && p.missing;
+    return `<tr>
+      <td class="dim mid">${esc(m.file.replace(/\.xlsx?$/i, ""))}</td><td class="dim mid">${esc(m.sheet)}</td>
+      <td>${esc(m.fn)}</td><td>${esc(m.st)}</td>
+      <td class="num">${fNum(m.q, 4)}${m.qMissing ? ' <span class="tag warn">blank</span>' : ""}</td>
+      <td class="wide strong">${esc(m.d)}</td><td class="mid">${esc(m.qpn)}</td><td class="mid">${esc(m.vendor)}</td><td>${esc(m.po)}</td>
+      <td class="num ${m.price == null ? "warn" : ""}">${m.price == null ? "No price" : fPrice(m.price)}</td><td>${linkCell(m.link)}</td>
+      <td class="num ${bad ? "warn" : ""}" ${bad ? 'title="No IE value for this station"' : ""}>${fNum(m.indA)}</td><td class="num strong">${fInt(m.totA)}</td>
+      <td class="num ${bad ? "warn" : ""}">${fNum(m.indB)}</td><td class="num strong">${fInt(m.totB)}</td>
+      <td class="wrap dim">${esc(m.note)}</td></tr>`;
+  }).join("");
+  return `
+  ${missingBanner()}
+  <h2>Master list</h2>
+  <p class="lede">Every BOM line. Total Qty = Qty per Station × IE indicator, rounded up.</p>
+  <div class="toolbar"><input class="search" id="mSearch" type="search" placeholder="Search item, QPN, vendor, station, sheet" value="${esc(ui.mSearch)}" aria-label="Search master list">
+    <select class="sel" id="mFn" aria-label="Filter by function"><option value="">All functions</option>${fns.map((f) => `<option ${ui.mFn === f ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>
+    <span class="grow"></span><span class="count">${fInt(total)} of ${fInt(C.master.length)} lines${total > LIMIT ? `, first ${LIMIT} shown` : ""}</span></div>
+  <div class="tscroll"><table class="grid"><thead><tr>
+    ${[["file","Source file"],["sheet","Sheet"],["fn","Function"],["st","Station Name"],["q","Qty per Station","num"],["d","Item Description"],["qpn","QPN"],["vendor","Vendor"],["po","PO Type"],["price","Price","num"],["link","Link"],
+      ["indA",`Indicator ${A}r/m`,"num"],["totA",`Total Qty ${A}r/m`,"num"],["indB",`Indicator ${B}r/m`,"num"],["totB",`Total Qty ${B}r/m`,"num"],["note","Note"]].map(([k, l, c]) => sortTh("master", k, l, c)).join("")}
+  </tr></thead><tbody>${html || `<tr><td colspan="16" class="dim">No lines match.</td></tr>`}</tbody></table></div>`;
+}
+
+/* ---------- Sorting + link helpers ---------- */
+function sortTh(view, key, label, cls = ""){
+  const s = ui.sort[view] || {}, on = s.key === key;
+  return `<th class="${cls}" aria-sort="${on ? (s.dir > 0 ? "ascending" : "descending") : "none"}"><button class="sortbtn" data-sort="${view}|${key}">${label}<span class="arr" aria-hidden="true">${on ? (s.dir > 0 ? "▲" : "▼") : "↕"}</span></button></th>`;
+}
+function applySort(view, rows, get){
+  const s = ui.sort[view]; if (!s || !get[s.key]) return rows;
+  const f = get[s.key];
+  return rows.slice().sort((a, b) => {
+    const x = f(a), y = f(b);
+    if (x == null || x === "") return (y == null || y === "") ? 0 : 1;
+    if (y == null || y === "") return -1;
+    return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), undefined, {numeric:true, sensitivity:"base"})) * s.dir;
+  });
+}
+function linkCell(url){
+  if (!url) return "";
+  return /^https?:\/\//i.test(url) ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="${esc(url)}">Open link</a>` : `<span class="dim" title="${esc(url)}">${esc(url.length > 30 ? url.slice(0, 30) + "…" : url)}</span>`;
+}
+
+/* ---------- Grouped ---------- */
+function renderGrouped(){
+  if (!C) return emptyState();
+  const A = S.demandA, B = S.demandB, q = ui.gSearch.toLowerCase();
+  let rows = C.groups.filter((g) => (!ui.gFlag || g.flags.length) && (!q || `${g.d} ${g.qpn} ${g.vendor} ${g.functions}`.toLowerCase().includes(q)));
+  rows = applySort("group", rows, {lines:(g) => g.lines.length, d:(g) => g.d, qpn:(g) => g.qpn, vendor:(g) => g.vendor, po:(g) => g.po, price:(g) => g.bomPrice,
+    fns:(g) => g.functions, sumA:(g) => g.sumA, sumB:(g) => g.sumB, link:(g) => g.link, warn:(g) => g.flags.join(", ")});
+  const nFlag = C.groups.filter((g) => g.flags.length).length;
+  const html = rows.map((g) => {
+    const open = ui.open.has(g.key);
+    let s = `<tr>
+      <td><button class="xbtn" data-open="${esc(g.key)}" aria-expanded="${open}" aria-label="Show source lines">${open ? "−" : "+"} ${g.lines.length}</button></td>
+      <td class="wide strong">${esc(g.d)}${g.variants.size > 1 ? `<div class="dim" style="font-weight:400">Also written as: ${[...g.variants].filter((v) => v !== g.d).map(esc).join("; ")}</div>` : ""}</td>
+      <td class="mid">${g.flags.map((f) => `<span class="tag warn">${esc(f)}</span>`).join("")}</td>
+      <td class="mid">${esc(g.qpn)}</td><td class="mid">${esc(g.vendor)}</td><td>${esc(g.po)}</td>
+      <td class="num ${g.bomPrice == null ? "warn" : ""}">${g.bomPrice == null ? "No price" : fPrice(g.bomPrice)}</td>
+      <td class="wrap">${esc(g.functions)}</td>
+      <td class="num strong">${fInt(g.sumA)}</td><td class="num strong">${fInt(g.sumB)}</td>
+      <td>${linkCell(g.link)}</td></tr>`;
+    if (open) s += g.lines.map((m) => `<tr class="sub"><td></td><td class="wide">${esc(m.fn)} - ${esc(m.st)} - ${esc(m.sheet)} <span class="dim">(${esc(m.file.replace(/\.xlsx?$/i, ""))}, row ${m.row})</span></td>
+      <td class="wrap dim">${esc(m.note)}</td><td class="mid">${esc(m.qpn)}</td><td class="mid">${esc(m.vendor)}</td><td>${esc(m.po)}</td><td class="num">${m.price == null ? "" : fPrice(m.price)}</td>
+      <td class="dim">Qty ${fNum(m.q, 4)} × ${fNum(m.indA)} / ${fNum(m.indB)}</td><td class="num">${fInt(m.totA)}</td><td class="num">${fInt(m.totB)}</td><td>${linkCell(m.link)}</td></tr>`).join("");
+    return s;
+  }).join("");
+  return `
+  <h2>Grouped by item</h2>
+  <p class="lede">Lines with the same Item Description are added together. Click + to see the source lines.</p>
+  ${nFlag ? `<div class="note warn"><strong>${nFlag} item${nFlag === 1 ? " has a warning" : "s have warnings"}</strong> (different spellings, prices, vendors or QPNs). Capex: click + to find the source file and row, ask that team to correct their BOM, then upload it again in step 3.</div>` : ""}
+  <div class="toolbar"><input class="search" id="gSearch" type="search" placeholder="Search item, QPN, vendor, function" value="${esc(ui.gSearch)}" aria-label="Search grouped items">
+    <label class="chk"><input type="checkbox" id="gFlag" ${ui.gFlag ? "checked" : ""}> Show warnings only (${nFlag})</label>
+    <span class="grow"></span><span class="count">${fInt(rows.length)} of ${fInt(C.groups.length)} items</span></div>
+  <div class="tscroll"><table class="grid"><thead><tr>${sortTh("group","lines","Lines")}${sortTh("group","d","Item description")}${sortTh("group","warn","Warning")}${sortTh("group","qpn","QPN")}${sortTh("group","vendor","Vendor")}${sortTh("group","po","PO type")}${sortTh("group","price","Price (BOM)","num")}${sortTh("group","fns","Function - Station")}${sortTh("group","sumA",`Sum Qty ${A}r/m`,"num")}${sortTh("group","sumB",`Sum Qty ${B}r/m`,"num")}${sortTh("group","link","Link")}</tr></thead>
+  <tbody>${html || `<tr><td colspan="11" class="dim">No items match.</td></tr>`}</tbody>
+  <tfoot><tr><td></td><td>Total</td><td colspan="6"></td><td class="num">${fInt(C.groups.reduce((t, g) => t + g.sumA, 0))}</td><td class="num">${fInt(C.groups.reduce((t, g) => t + g.sumB, 0))}</td><td></td></tr></tfoot></table></div>`;
+}
+
+/* ---------- Final ---------- */
+const FINAL_GET = {d:(g) => g.d, qpn:(g) => g.qpn, vendor:(g) => g.vendor, li:(g) => g.local ? "Local" : "International", sumA:(g) => g.sumA, sumB:(g) => g.sumB,
+  buffer:(g) => g.buffer, lev:(g) => g.lev, price:(g) => g.price, costX:(g) => g.costX, unitCost:(g) => g.unitCost, qtyA:(g) => g.qtyA, costA:(g) => g.costA,
+  qtyB:(g) => g.qtyB, costB:(g) => g.costB, remark:(g) => g.remark, link:(g) => g.link};
+function finalRows(){
+  const q = ui.fSearch.toLowerCase();
+  const rows = C.groups.filter((g) => (!q || `${g.d} ${g.qpn} ${g.vendor} ${g.functions}`.toLowerCase().includes(q)) &&
+    (!ui.fOnly || (ui.fOnly === "noprice" && g.price == null) || (ui.fOnly === "edited" && S.items[g.key]) || (ui.fOnly === "flag" && g.flags.length)));
+  return applySort("final", rows, FINAL_GET);
+}
+function finalVal(g, field){
+  return {buffer: Math.round(g.buffer * 1000) / 10, lev: g.lev, price: g.price, costX: g.costX, qtyA: g.qtyA, qtyB: g.qtyB, remark: g.remark}[field];
+}
+function editIn(g, field, label, cls = ""){
+  const set = S.items[g.key] && S.items[g.key][field] != null;
+  const v = finalVal(g, field);
+  return `<input class="cell-edit ${cls} ${set ? "set" : ""}" data-it="${field}" data-k="${esc(g.key)}" value="${esc(v ?? "")}" placeholder="${field === "price" ? "No price" : field === "remark" ? "Add comment" : ""}" aria-label="${esc(label)}" title="${set ? "Edited. Clear the cell to go back to the calculated value." : "Click to edit"}">`;
+}
+function finalRowHTML(g){
+  return `<tr data-row="${esc(g.key)}">
+    <td class="sticky wrap strong">${esc(g.d)}${g.flags.length ? `<div>${g.flags.map((f) => `<span class="tag warn">${esc(f)}</span>`).join("")}</div>` : ""}</td>
+    <td class="mid">${esc(g.qpn)}</td><td class="mid">${esc(g.vendor)}</td><td>${linkCell(g.link)}</td><td>${g.local ? "Local" : "International"}</td>
+    <td class="num">${fInt(g.sumA)}</td><td class="num">${fInt(g.sumB)}</td>
+    <td class="num ein">${editIn(g, "buffer", "Buffer percent for " + g.d)}</td>
+    <td class="num ein">${editIn(g, "lev", "Leverage qty for " + g.d)}</td>
+    <td class="num ein ${g.price == null ? "warn" : ""}">${editIn(g, "price", "Unit price for " + g.d)}</td>
+    <td class="num ein">${editIn(g, "costX", "Cost markup for " + g.d)}</td>
+    <td class="num" data-f="unitCost">${fPrice(g.unitCost)}</td>
+    <td class="num ein strongcell">${editIn(g, "qtyA", "Final qty at demand A for " + g.d)}</td><td class="num" data-f="costA">${fMoney(g.costA)}</td>
+    <td class="num ein strongcell">${editIn(g, "qtyB", "Final qty at demand B for " + g.d)}</td><td class="num" data-f="costB">${fMoney(g.costB)}</td>
+    <td class="ein">${editIn(g, "remark", "Capex comment for " + g.d, "txt")}</td></tr>`;
+}
+function ledgerHTML(){
+  const t = C.totals, edited = Object.keys(S.items).filter((k) => C.groups.some((g) => g.key === k)).length;
+  return `<div class="big"><dt>Total NRE ${S.demandA}r/m</dt><dd>${fMoney(t.costA)}</dd></div>
+    <div class="big"><dt>Total NRE ${S.demandB}r/m</dt><dd>${fMoney(t.costB)}</dd></div>
+    <div><dt>Items</dt><dd>${fInt(C.groups.length)}</dd></div>
+    <div><dt>Items without a price</dt><dd class="${t.noPrice ? "warnv" : ""}">${t.noPrice}</dd></div>
+    <div><dt>Items you edited</dt><dd>${edited}</dd></div>${t.missingIE ? `<div><dt>Stations needing IE value</dt><dd class="warnv">${t.missingIE}</dd></div>` : ""}`;
+}
+function renderFinal(){
+  if (!C) return emptyState();
+  const A = S.demandA, B = S.demandB, st = S.settings;
+  const rows = finalRows();
+  const th = (k, l, c) => sortTh("final", k, l, c);
+  return `
+  ${missingBanner()}
+  <h2>Final purchase list</h2>
+  <p class="lede">Final Qty = Sum Qty × (1 + Buffer) − Leverage, rounded up. Click an underlined value to edit; clear it to restore the calculated value.</p>
+  <div class="panel settings">
+    <div class="field"><span>Default buffer</span><div class="row"><input id="sBuf" value="${Math.round(st.buffer * 1000) / 10}" aria-label="Default buffer percent"> %</div></div>
+    <div class="field"><span>Cost markup, local</span><div class="row">× <input id="sLoc" value="${st.localX}" aria-label="Local cost markup"></div></div>
+    <div class="field"><span>Cost markup, international</span><div class="row">× <input id="sInt" value="${st.intlX}" aria-label="International cost markup"></div></div>
+    <div class="field"><span>Local vendor keywords</span><div class="row"><input class="kw" id="sKw" value="${esc(st.localKeywords)}" aria-label="Local vendor keywords"></div></div>
+    <span class="grow" style="flex:1"></span>
+    ${Object.keys(S.items).length ? `<button class="btn small" id="clearEdits">Clear all item edits</button>` : ""}
+  </div>
+  <dl class="ledger" id="ledger">${ledgerHTML()}</dl>
+  <div class="toolbar"><input class="search" id="fSearch" type="search" placeholder="Search item, QPN, vendor, function" value="${esc(ui.fSearch)}" aria-label="Search final list">
+    <select class="sel" id="fOnly" aria-label="Show"><option value="">All items</option><option value="noprice" ${ui.fOnly === "noprice" ? "selected" : ""}>Without a price</option><option value="flag" ${ui.fOnly === "flag" ? "selected" : ""}>With warning</option><option value="edited" ${ui.fOnly === "edited" ? "selected" : ""}>Edited by you</option></select>
+    <span class="grow"></span><span class="count">${fInt(rows.length)} of ${fInt(C.groups.length)} items</span></div>
+  <div class="tscroll"><table class="grid final" id="finalTable"><thead><tr>
+    ${th("d","Item Description","sticky")}${th("qpn","QPN")}${th("vendor","Vendor")}${th("link","Link")}${th("li","Local or International")}${th("sumA",`Sum Qty ${A}r/m`,"num")}${th("sumB",`Sum Qty ${B}r/m`,"num")}
+    ${th("buffer","Buffer %","num")}${th("lev","Leverage Qty","num")}${th("price","Unit Price","num")}${th("costX","Cost Markup","num")}${th("unitCost","Overall Unit Cost","num")}
+    ${th("qtyA",`Final Qty ${A}r/m`,"num")}${th("costA",`Total Price ${A}r/m`,"num")}${th("qtyB",`Final Qty ${B}r/m`,"num")}${th("costB",`Total Price ${B}r/m`,"num")}${th("remark","Capex comment")}
+  </tr></thead><tbody>${rows.map(finalRowHTML).join("") || `<tr><td colspan="17" class="dim">No items match.</td></tr>`}</tbody>
+  <tfoot><tr><td class="sticky">Total</td><td colspan="11"></td><td class="num" id="tQA">${fInt(C.totals.qtyA)}</td><td class="num" id="tCA">${fMoney(C.totals.costA)}</td><td class="num" id="tQB">${fInt(C.totals.qtyB)}</td><td class="num" id="tCB">${fMoney(C.totals.costB)}</td><td></td></tr></tfoot></table></div>`;
+}
+function patchFinalRow(key){
+  const g = C.groups.find((x) => x.key === key);
+  const tr = [...document.querySelectorAll("#finalTable tr[data-row]")].find((r) => r.dataset.row === key);
+  if (!g || !tr) return;
+  const f = {unitCost:fPrice(g.unitCost), costA:fMoney(g.costA), costB:fMoney(g.costB)};
+  tr.querySelectorAll("[data-f]").forEach((td) => { td.textContent = f[td.dataset.f]; });
+  tr.querySelectorAll("input[data-it]").forEach((inp) => {
+    if (inp === document.activeElement) return;
+    const set = S.items[key] && S.items[key][inp.dataset.it] != null;
+    inp.value = finalVal(g, inp.dataset.it) ?? ""; inp.classList.toggle("set", !!set);
+    inp.title = set ? "Edited. Clear the cell to go back to the calculated value." : "Click to edit";
+    if (inp.dataset.it === "price") inp.closest("td").classList.toggle("warn", g.price == null);
+  });
+  $("#ledger").innerHTML = ledgerHTML();
+  $("#tQA").textContent = fInt(C.totals.qtyA); $("#tCA").textContent = fMoney(C.totals.costA);
+  $("#tQB").textContent = fInt(C.totals.qtyB); $("#tCB").textContent = fMoney(C.totals.costB);
+  renderHeader();
+}
+
+function emptyState(){
+  return `<div class="panel empty"><strong>No BOMs yet</strong>Upload the team BOMs in step 3.<div style="margin-top:14px"><button class="btn primary" data-tab-go="upload">Go to upload</button></div></div>`;
+}
+
+/* ---------- Render + events ---------- */
+function render(){
+  renderHeader();
+  const v = {ie:renderIE, tpl:renderTemplates, upload:renderUpload, master:renderMaster, group:renderGrouped, final:renderFinal}[S.tab] || renderIE;
+  $("#view").innerHTML = v();
+  bindView();
+}
+let tSearch;
+function bindView(){
+  const drop = $("#drop");
+  if (drop) {
+    drop.addEventListener("click", () => $("#fileIn").click());
+    drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#fileIn").click(); } });
+    drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+    drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+    drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); handleFiles([...e.dataTransfer.files]); });
+  }
+  const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
+  on("#clearAll", "click", () => { if (confirm("Remove all uploaded files? IE indicators and item edits are kept.")) { S.files = []; S.priceList = null; save(); recompute(); render(); } });
+  on("#ieAdd", "click", () => { S.ie.table.push({ id:"", fn:"", st:"", kind:"table", vals:{}, note:"" }); save(); render(); const ins = document.querySelectorAll('[data-ief$="|fn"]'); if (ins.length) ins[ins.length - 1].focus(); });
+  on("#tplAll", "click", () => downloadTemplates(teamList()));
+  on("#pasteToggle", "click", () => { ui.paste = !ui.paste; render(); if (ui.paste) { const el = $("#pasteBox"); if (el) el.focus(); } });
+  on("#pasteApply", "click", () => {
+    const res = parsePasted($("#pasteBox").value);
+    if (res.error) { $("#pasteInfo").textContent = res.error; return; }
+    if (!res.rows.length) { $("#pasteInfo").textContent = "Nothing to paste. Copy the 5 columns from Excel and paste them here."; return; }
+    const A = S.demandA, B = S.demandB;
+    S.ie.table = res.rows.map((r) => ({ id: NRE.mapKey(r.fn, r.st), fn: r.fn, st: r.st, kind: "table", note: r.basis,
+      vals: Object.assign({}, r.a != null ? {[A]: r.a} : {}, r.b != null ? {[B]: r.b} : {}) }));
+    S.ie.demands = [...new Set([A, B])].sort((x, y) => x - y);
+    S.ie.source = "IE standard table (pasted)";
+    ui.paste = false; save(); recompute(); render(); toast(`IE table replaced: ${res.rows.length} rows.`);
+  });
+  for (const [id, key] of [["#mSearch","mSearch"],["#gSearch","gSearch"],["#fSearch","fSearch"]]) {
+    on(id, "input", (e) => { ui[key] = e.target.value; clearTimeout(tSearch); tSearch = setTimeout(() => { const pos = e.target.selectionStart; render(); const el = $(id); if (el) { el.focus(); try { el.setSelectionRange(pos, pos); } catch(_){} } }, 220); });
+  }
+  on("#mFn", "change", (e) => { ui.mFn = e.target.value; render(); });
+  on("#gFlag", "change", (e) => { ui.gFlag = e.target.checked; render(); });
+  on("#fOnly", "change", (e) => { ui.fOnly = e.target.value; render(); });
+  on("#clearEdits", "click", () => { if (confirm("Clear every buffer, leverage, price, markup, qty and Capex comment you typed?")) { S.items = {}; save(); recompute(); render(); } });
+  const setNum = (id, fn) => on(id, "change", (e) => { const v = Number(e.target.value); if (isFinite(v) && e.target.value !== "") { fn(v); save(); recompute(); render(); } else { toast("Enter a number."); render(); } });
+  setNum("#sBuf", (v) => S.settings.buffer = v / 100);
+  setNum("#sLoc", (v) => S.settings.localX = v);
+  setNum("#sInt", (v) => S.settings.intlX = v);
+  on("#sKw", "change", (e) => { S.settings.localKeywords = e.target.value; save(); recompute(); render(); });
+}
+document.addEventListener("click", (e) => {
+  const go = e.target.closest("[data-tab-go]"); if (go) { S.tab = go.dataset.tabGo; save(); render(); window.scrollTo({top:0}); return; }
+  const rm = e.target.closest("[data-rm]"); if (rm) { removeFile(+rm.dataset.rm); return; }
+  const del = e.target.closest("[data-iedel]"); if (del) { const r = S.ie.table[+del.dataset.iedel]; if (!r.fn && !r.st || confirm(`Delete ${r.fn} ${r.st} from the IE table?`)) { S.ie.table.splice(+del.dataset.iedel, 1); save(); recompute(); render(); } return; }
+  const tp = e.target.closest("[data-tpl]"); if (tp) { downloadTemplates([tp.dataset.tpl]); return; }
+  const so = e.target.closest("[data-sort]"); if (so) { const [v, k] = so.dataset.sort.split("|"); const cur = ui.sort[v]; ui.sort[v] = cur && cur.key === k ? {key:k, dir:-cur.dir} : {key:k, dir:1}; render(); return; }
+  const op = e.target.closest("[data-open]"); if (op) { const k = op.dataset.open; ui.open.has(k) ? ui.open.delete(k) : ui.open.add(k); render(); }
+});
+document.addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.dataset.ief) {
+    const [i, f] = t.dataset.ief.split("|"), r = S.ie.table[+i];
+    r[f] = t.value.trim(); r.id = NRE.mapKey(r.fn, r.st);
+    save(); recompute(); render(); focusNext(t.dataset.ief, "ief"); return;
+  }
+  if (t.dataset.iev) {
+    const [i, d] = t.dataset.iev.split("|").map(Number);
+    const r = S.ie.table[i], raw = t.value.trim();
+    if (raw === "") delete r.vals[d];
+    else { const v = Number(raw); if (!isFinite(v) || v < 0) { toast("Enter a number of 0 or more."); render(); return; } r.vals = r.vals || {}; r.vals[d] = v; if (!S.ie.demands.includes(d)) S.ie.demands = [...S.ie.demands, d].sort((x, y) => x - y); }
+    save(); recompute(); render(); focusNext(t.dataset.iev, "iev"); return;
+  }
+  if (t.dataset.par) {
+    const v = Number(t.value);
+    if (!isFinite(v) || t.value === "" || (v <= 0 && !t.dataset.par.endsWith("retest"))) { toast("Enter a positive number."); render(); return; }
+    if (t.dataset.par.endsWith("retest") && !(v >= 0 && v < 1)) { toast("Retest rate must be between 0 and 1, e.g. 0.05."); render(); return; }
+    if (t.dataset.par.includes("|")) { const [s, k] = t.dataset.par.split("|"); S.ie.stages[s][k] = v; } else S.ie[t.dataset.par] = v;
+    save(); recompute(); render(); return;
+  }
+  if (t.dataset.it) {
+    const k = t.dataset.k, f = t.dataset.it, raw = t.value.trim();
+    const it = S.items[k] || {};
+    if (raw === "") delete it[f];
+    else if (f === "remark") it[f] = raw;
+    else {
+      const n = Number(raw.replace(/[$,%\s]/g, ""));
+      if (!isFinite(n) || n < 0) { toast("Enter a number of 0 or more, or clear the cell for the calculated value."); patchFinalRow(k); return; }
+      it[f] = f === "buffer" ? n / 100 : (f === "qtyA" || f === "qtyB" || f === "lev") ? Math.round(n) : n;
+    }
+    if (Object.keys(it).length) S.items[k] = it; else delete S.items[k];
+    save(); recompute(); t.blur(); patchFinalRow(k);
+  }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.matches(".cell-in, .cell-edit, .cell-plain, .field input")) { ui.nextFocus = e.target.matches(".cell-plain"); e.target.blur(); ui.nextFocus = false; } });
+function focusNext(key, attr){
+  if (!ui.nextFocus) return;
+  const el = document.querySelector(`[data-${attr}="${CSS.escape(key)}"]`); if (!el) return;
+  const nx = el.closest("td").nextElementSibling?.querySelector("input"); (nx || el).focus();
+}
+$("#fileIn").addEventListener("change", (e) => { handleFiles([...e.target.files]); e.target.value = ""; });
+
+/* ---------- Download ---------- */
+let downloads = null;
+if (window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then((d) => { downloads = d; }).catch(() => {});
+$("#dlBtn").addEventListener("click", async () => {
+  if (!C) return;
+  if (!window.ExcelJS) { toast("The Excel writer did not load. Check your connection and reload the page."); return; }
+  const btn = $("#dlBtn"); btn.disabled = true; const label = btn.textContent; btn.textContent = "Building workbook…";
+  try {
+    const buf = await NRE.exportWorkbook(ExcelJS, S, C);
+    const d = new Date(), stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+    const filename = `${(S.project || "NRE").replace(/[^\w\- ]+/g, "").trim() || "NRE"}_NRE_Final_${stamp}.xlsx`;
+    const blob = new Blob([buf], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    if (downloads) {
+      try { await downloads.save({filename, data:blob}); toast(`Saved ${filename}`); }
+      catch(err) {
+        const code = err && err.code;
+        if (code === "declined") toast("Download cancelled.");
+        else if (code === "rate_limited") toast("A save prompt is already open. Finish that one first.");
+        else { fallbackDownload(blob, filename); }
+      }
+    } else fallbackDownload(blob, filename);
+  } catch(err) { toast("Could not build the workbook: " + (err && err.message || err)); }
+  finally { btn.disabled = false; btn.textContent = label; }
+});
+async function saveBlob(blob, filename){
+  if (downloads) {
+    try { await downloads.save({filename, data:blob}); toast(`Saved ${filename}`); }
+    catch(err) {
+      const code = err && err.code;
+      if (code === "declined") toast("Download cancelled.");
+      else if (code === "rate_limited") toast("A save prompt is already open. Finish that one first.");
+      else fallbackDownload(blob, filename);
+    }
+  } else fallbackDownload(blob, filename);
+}
+async function downloadTemplates(teams){
+  if (!window.ExcelJS) { toast("The Excel writer did not load. Check your connection and reload the page."); return; }
+  const XL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  const proj = (S.project || "NRE").replace(/[^\w\- ]+/g, "").trim() || "NRE";
+  const name = (t) => `${proj}_${t.replace(/[^\w\- ]+/g, "").trim()}_BOM_${S.demandA}-${S.demandB}rm.xlsx`;
+  try {
+    if (!window.JSZip) { toast("The zip library did not load. Check your connection and reload the page."); return; }
+    if (teams.length === 1) { const buf = await NRE.exportTemplate(ExcelJS, JSZip, S, teams[0], teamSheets(teams[0])); await saveBlob(new Blob([buf], {type:XL}), name(teams[0])); return; }
+    toast("Building templates…");
+    const zip = new JSZip();
+    for (const t of teams) zip.file(name(t), await NRE.exportTemplate(ExcelJS, JSZip, S, t, teamSheets(t)));
+    await saveBlob(await zip.generateAsync({type:"blob"}), `${proj}_BOM_templates_${S.demandA}-${S.demandB}rm.zip`);
+  } catch(err) { toast("Could not build the template: " + (err && err.message || err)); }
+}
+function fallbackDownload(blob, filename){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast(`Downloading ${filename}`);
+}
+
+recompute(); render();
+})();
+</script>
+</body>
+</html>
