@@ -380,10 +380,13 @@ th.num .sortbtn{flex-direction:row-reverse}
 
   /* ---------------- Workbook detection & BOM parsing ---------------- */
   function headerIndex(row) {
-    const ix = {};
+    const ix = { indBy: {}, totBy: {} };
     (row || []).forEach((v, c) => {
       const h = norm(v);
       if (!h) return;
+      const dm = h.match(/(\d+)\s*r\s*\/?\s*m/);
+      if (dm && h.includes("indicator") && ix.indBy[+dm[1]] == null) ix.indBy[+dm[1]] = c;
+      if (dm && h.includes("total") && ix.totBy[+dm[1]] == null) ix.totBy[+dm[1]] = c;
       const set = (k) => { if (ix[k] == null) ix[k] = c; };
       if (h === "function") set("fn");
       else if (h === "station name") set("st");
@@ -470,11 +473,13 @@ th.num .sortbtn{flex-direction:row-reverse}
             link: ix.link != null ? clean(row[ix.link]) : "", price: ix.price != null ? num(row[ix.price]) : null, note,
             i100: ix.i100 != null ? num(row[ix.i100]) : null, i250: ix.i250 != null ? num(row[ix.i250]) : null,
             t100: ix.t100 != null ? num(row[ix.t100]) : null, t250: ix.t250 != null ? num(row[ix.t250]) : null,
+            inds: Object.fromEntries(Object.entries(ix.indBy).map(([d, col]) => [d, num(row[col])])),
+            tots: Object.fromEntries(Object.entries(ix.totBy).map(([d, col]) => [d, num(row[col])])),
           });
           n++;
         }
         if (skippedBlank) out.warnings.push(`${sn}: skipped ${skippedBlank} line(s) with a description but no station or quantity.`);
-        out.sheets.push({ name: sn, rows: n, role: "BOM" });
+        out.sheets.push({ name: sn, rows: n, role: "BOM", demands: Object.keys(ix.totBy).map(Number).concat(Object.keys(ix.indBy).map(Number)).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b) });
         continue;
       }
       // Indicator note sheet
@@ -619,8 +624,14 @@ th.num .sortbtn{flex-direction:row-reverse}
       if (f.kind !== "bom") continue;
       for (const r of f.rows) {
         const p = mapping.byKey.get(mapKey(r.fn, r.st));
-        const totA = ceil(r.q * p.indA), totB = ceil(r.q * p.indB);
-        master.push({ ...r, team: f.team, mapId: p.id, indA: p.indA, indB: p.indB, totA, totB, key: norm(r.d) });
+        const pickD = (d) => {
+          const ind = r.inds && r.inds[d] != null ? r.inds[d] : null;
+          let tot = r.tots && r.tots[d] != null ? r.tots[d] : null;
+          if (tot == null && ind != null && !r.qMissing) tot = ceil(r.q * ind);
+          return [ind, tot];
+        };
+        const [indA, tA] = pickD(state.demandA), [indB, tB] = pickD(state.demandB);
+        master.push({ ...r, team: f.team, mapId: p.id, indA, indB, totA: tA ?? 0, totB: tB ?? 0, noTotA: tA == null, noTotB: tB == null, key: norm(r.d) });
       }
     }
     const gmap = new Map();
@@ -689,7 +700,8 @@ th.num .sortbtn{flex-direction:row-reverse}
       if (g.price == null) t.noPrice++;
       return t;
     }, { costA: 0, costB: 0, qtyA: 0, qtyB: 0, noPrice: 0 });
-    totals.missingIE = mapping.list.filter((p) => p.missing).length;
+    totals.missingIE = 0;
+    totals.noTotal = master.filter((m) => m.noTotA || m.noTotB).length;
     return { mapping, master, groups, totals };
   }
 
@@ -757,7 +769,7 @@ th.num .sortbtn{flex-direction:row-reverse}
       { h: `Indicator ${A}r/m`, k: "a", w: 15, fmt: "0.###", input: true, grp: "A" }, { h: `Indicator ${B}r/m`, k: "b", w: 15, fmt: "0.###", input: true, grp: "B" },
       { h: "Note", k: "note", w: 18 }, { h: "BOM lines", k: "lines", w: 11, fmt: "#,##0" }];
     const nIE = ie.table.length + 1;
-    const mCols = [{ h: "Group ID", k: "gid", w: 6, hidden: true }, { h: "IE Row", k: "ieRow", w: 6, hidden: true },
+    const mCols = [{ h: "Group ID", k: "gid", w: 6, hidden: true },
       { h: "Source file", k: "file", w: 24 }, { h: "Sheet", k: "sheet", w: 20 }, { h: "Function", k: "fn", w: 11 }, { h: "Station Name", k: "st", w: 20 },
       { h: "Quantity Per Station", k: "q", w: 11, fmt: "0.####" }, { h: "Item Description", k: "d", w: 46 }, { h: "QPN", k: "qpn", w: 16 },
       { h: "Vendor", k: "vendor", w: 22 }, { h: "PO Type", k: "po", w: 12 }, { h: "Link", k: "link", w: 28 }, { h: "Price", k: "price", w: 12, fmt: "#,##0.00" },
@@ -766,26 +778,13 @@ th.num .sortbtn{flex-direction:row-reverse}
       { h: "Note", k: "note", w: 40 }];
     const mLast = C.master.length + 1;
     const mL = (k) => colL(mCols, k);
-    sheet("IE Indicators", iCols, ie.table.map((r, i) => ({ fn: r.fn, st: r.st, a: ieVal(r, A), b: ieVal(r, B), note: r.note || "-",
-      lines: C.master.filter((m) => { const p = C.mapping.list[m.mapId - 1]; return p && p.ieRow === r; }).length })), {
-      onRow: (row, r, n, col) => {
-        row.getCell(col("lines")).value = F(`COUNTIF(Master!$${mL("ieRow")}$2:$${mL("ieRow")}$${mLast},${n - 1})`, r.lines);
-        [col("a"), col("b")].forEach((k) => { if (row.getCell(k).value == null) row.getCell(k).fill = fill(WARN); });
-      },
-    });
-
     // ---- Master
     const gidByKey = new Map(C.groups.map((g) => [g.key, g.id]));
-    const mRows = C.master.map((m) => { const p = C.mapping.list[m.mapId - 1]; return { ...m, gid: gidByKey.get(m.key), ieRow: p && p.ieRow ? ieIdx.get(p.ieRow) : null }; });
+    const mRows = C.master.map((m) => ({ ...m, gid: gidByKey.get(m.key) }));
     sheet("Master", mCols, mRows, {
       onRow: (row, r, n, col) => {
-        if (r.ieRow) {
-          row.getCell(col("indA")).value = F(`N(INDEX('IE Indicators'!$C$2:$C$${nIE},${mL("ieRow")}${n}))`, r.indA);
-          row.getCell(col("indB")).value = F(`N(INDEX('IE Indicators'!$D$2:$D$${nIE},${mL("ieRow")}${n}))`, r.indB);
-        }
-        if (!r.ieRow || C.mapping.list[r.mapId - 1].missing) { row.getCell(col("indA")).fill = fill(WARN); row.getCell(col("indB")).fill = fill(WARN); }
-        row.getCell(col("totA")).value = F(`ROUNDUP(${mL("q")}${n}*${mL("indA")}${n},0)`, r.totA);
-        row.getCell(col("totB")).value = F(`ROUNDUP(${mL("q")}${n}*${mL("indB")}${n},0)`, r.totB);
+        if (r.noTotA) row.getCell(col("totA")).fill = fill(WARN);
+        if (r.noTotB) row.getCell(col("totB")).fill = fill(WARN);
         if (r.price == null) row.getCell(col("price")).fill = fill(WARN);
       },
     });
@@ -869,7 +868,7 @@ th.num .sortbtn{flex-direction:row-reverse}
     put(9, ["Items", C.groups.length]);
     put(10, ["BOM lines", C.master.length]);
     put(11, ["Items without a price", C.totals.noPrice]);
-    put(12, ["Stations without an IE value", C.totals.missingIE]);
+    put(12, ["BOM lines without a Total Qty", C.totals.noTotal]);
 
     return wb.xlsx.writeBuffer();
   }
@@ -1040,10 +1039,16 @@ for (const [id, k] of [["#dA","demandA"],["#dB","demandB"]]) {
 }
 
 /* ---------- 1. IE indicators ---------- */
+function bomDemands(){
+  const set = new Set();
+  for (const f of boms()) for (const s of f.sheets) (s.demands || []).forEach((d) => set.add(d));
+  return [...set].sort((a, b) => a - b);
+}
 function missingBanner(){
-  if (!C || !C.totals.missingIE) return "";
-  const names = C.mapping.list.filter((p) => p.missing).map((p) => `${p.fn} ${p.st}`).join(", ");
-  return `<div class="note bad"><strong>${C.totals.missingIE === 1 ? "1 station needs" : C.totals.missingIE + " stations need"} an IE value:</strong> ${esc(names)}. Qty is 0 until IE fills them in. ${S.tab === "ie" ? "" : `<button class="btn link" data-tab-go="ie">Go to IE indicators</button>`}</div>`;
+  if (!C || !C.totals.noTotal) return "";
+  const ds = bomDemands(), A = S.demandA, B = S.demandB;
+  const fix = ds.length === 2 && (ds[0] !== A || ds[1] !== B) ? ` <button class="btn small" id="useBomDemands" data-a="${ds[0]}" data-b="${ds[1]}">Use ${ds[0]} / ${ds[1]} r/m</button>` : "";
+  return `<div class="note bad"><strong>${fInt(C.totals.noTotal)} BOM line${C.totals.noTotal === 1 ? " has" : "s have"} no Total Qty for ${A}r/m or ${B}r/m</strong> and count as 0. ${ds.length ? `The uploaded BOMs have columns for ${ds.join(", ")} r/m.` : ""}${fix}</div>`;
 }
 function ieBlanks(){ const A = S.demandA, B = S.demandB; return S.ie.table.filter((r) => !r.vals || r.vals[A] == null || r.vals[B] == null).length; }
 function renderIE(){
@@ -1055,8 +1060,8 @@ function renderIE(){
   const nb = ieBlanks();
   return `
   <h2>IE indicators</h2>
-  <p class="lede">IE enters each station's indicator for Demand A and B. Blank cells count as 0.</p>
-  ${nb ? `<div class="note warn">${nb} row${nb === 1 ? " is" : "s are"} blank (highlighted).</div>` : ""}
+  <p class="lede">IE enters each station's indicator for Demand A and B. These are used only to build the BOM templates; the final numbers come from the uploaded BOMs.</p>
+  ${nb ? `<div class="note warn">${nb} row${nb === 1 ? " is" : "s are"} blank (highlighted). Templates will show no indicator for ${nb === 1 ? "that station" : "those stations"}.</div>` : ""}
   <div class="toolbar"><button class="btn small" id="pasteToggle">${ui.paste ? "Cancel paste" : "Paste from Excel"}</button><button class="btn small" id="ieAdd">Add row</button>
     <span class="grow"></span><button class="btn small primary" data-tab-go="tpl">Next: BOM templates</button></div>
   ${ui.paste ? `<div class="panel pad" style="margin-bottom:12px">
@@ -1139,7 +1144,6 @@ function renderUpload(){
       <td><button class="xbtn" data-rm="${i}" aria-label="Remove ${esc(f.name)}">Remove</button></td></tr>`;
   }).join("");
   const dup = duplicateWarning();
-  const probs = C ? C.mapping.list.filter((p) => p.notInIE) : [];
   return `
   <h2>Upload BOMs</h2>
   <p class="lede">Upload the completed BOM templates. A file with the same name replaces the earlier one.</p>
@@ -1148,7 +1152,7 @@ function renderUpload(){
     <p>Excel files (.xlsx)</p>
   </div>
   ${dup ? `<div class="note warn">${esc(dup)}</div>` : ""}
-  ${probs.length ? `<div class="note bad"><strong>Station names not in the IE table:</strong> ${probs.map((p) => `${esc(p.fn)} · ${esc(p.st)} (${p.rows} lines)`).join(", ")}. Add them in step 1 or correct the BOM.</div>` : ""}
+  ${boms().length ? `<div class="infoline"><span><strong>Demands in uploaded BOMs:</strong> ${bomDemands().map((d) => d + "r/m").join(", ") || "none found"}</span></div>` : ""}
   ${missingBanner()}
   ${S.files.length ? `
   <div class="toolbar"><span class="count">${S.files.length} file${S.files.length === 1 ? "" : "s"} loaded</span><span class="grow"></span>
@@ -1201,21 +1205,21 @@ function renderMaster(){
     po:(m) => m.po, price:(m) => m.price, link:(m) => m.link, indA:(m) => m.indA, totA:(m) => m.totA, indB:(m) => m.indB, totB:(m) => m.totB, note:(m) => m.note});
   const total = rows.length, LIMIT = 1500; rows = rows.slice(0, LIMIT);
   const html = rows.map((m) => {
-    const p = C.mapping.list[m.mapId - 1], bad = p && p.missing;
+    const badA = m.noTotA, badB = m.noTotB;
     return `<tr>
       <td class="dim mid">${esc(m.file.replace(/\.xlsx?$/i, ""))}</td><td class="dim mid">${esc(m.sheet)}</td>
       <td>${esc(m.fn)}</td><td>${esc(m.st)}</td>
       <td class="num">${fNum(m.q, 4)}${m.qMissing ? ' <span class="tag warn">blank</span>' : ""}</td>
       <td class="wide strong">${esc(m.d)}</td><td class="mid">${esc(m.qpn)}</td><td class="mid">${esc(m.vendor)}</td><td>${esc(m.po)}</td>
       <td class="num ${m.price == null ? "warn" : ""}">${m.price == null ? "No price" : fPrice(m.price)}</td><td>${linkCell(m.link)}</td>
-      <td class="num ${bad ? "warn" : ""}" ${bad ? 'title="No IE value for this station"' : ""}>${fNum(m.indA)}</td><td class="num strong">${fInt(m.totA)}</td>
-      <td class="num ${bad ? "warn" : ""}">${fNum(m.indB)}</td><td class="num strong">${fInt(m.totB)}</td>
+      <td class="num">${fNum(m.indA)}</td><td class="num strong ${badA ? "warn" : ""}" ${badA ? 'title="No Total Qty in the BOM for this demand"' : ""}>${badA ? "–" : fInt(m.totA)}</td>
+      <td class="num">${fNum(m.indB)}</td><td class="num strong ${badB ? "warn" : ""}" ${badB ? 'title="No Total Qty in the BOM for this demand"' : ""}>${badB ? "–" : fInt(m.totB)}</td>
       <td class="wrap dim">${esc(m.note)}</td></tr>`;
   }).join("");
   return `
   ${missingBanner()}
   <h2>Master list</h2>
-  <p class="lede">Every BOM line. Total Qty = Qty per Station × IE indicator, rounded up.</p>
+  <p class="lede">Every BOM line, with Indicator and Total Qty exactly as in the uploaded BOM file.</p>
   <div class="toolbar"><input class="search" id="mSearch" type="search" placeholder="Search item, QPN, vendor, station, sheet" value="${esc(ui.mSearch)}" aria-label="Search master list">
     <select class="sel" id="mFn" aria-label="Filter by function"><option value="">All functions</option>${fns.map((f) => `<option ${ui.mFn === f ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>
     <span class="grow"></span><span class="count">${fInt(total)} of ${fInt(C.master.length)} lines${total > LIMIT ? `, first ${LIMIT} shown` : ""}</span></div>
@@ -1332,7 +1336,7 @@ function ledgerHTML(){
     <div class="big"><dt>Total NRE ${S.demandB}r/m</dt><dd>${fMoney(t.costB)}</dd></div>
     <div><dt>Items</dt><dd>${fInt(C.groups.length)}</dd></div>
     <div><dt>Items without a price</dt><dd class="${t.noPrice ? "warnv" : ""}">${t.noPrice}</dd></div>
-    <div><dt>Items you edited</dt><dd>${edited}</dd></div>${t.missingIE ? `<div><dt>Stations needing IE value</dt><dd class="warnv">${t.missingIE}</dd></div>` : ""}`;
+    <div><dt>Items you edited</dt><dd>${edited}</dd></div>${t.noTotal ? `<div><dt>Lines without Total Qty</dt><dd class="warnv">${fInt(t.noTotal)}</dd></div>` : ""}`;
 }
 function renderFinal(){
   if (!C) return emptyState();
@@ -1408,6 +1412,7 @@ function bindView(){
   on("#clearAll", "click", () => { if (confirm("Remove all uploaded files? IE indicators and item edits are kept.")) { S.files = []; S.priceList = null; save(); recompute(); render(); } });
   on("#ieAdd", "click", () => { S.ie.table.push({ id:"", fn:"", st:"", kind:"table", vals:{}, note:"" }); save(); render(); const ins = document.querySelectorAll('[data-ief$="|fn"]'); if (ins.length) ins[ins.length - 1].focus(); });
   on("#tplAll", "click", () => downloadTemplates(teamList()));
+  on("#useBomDemands", "click", (e) => { S.demandA = +e.target.dataset.a; S.demandB = +e.target.dataset.b; save(); recompute(); render(); toast(`Demand set to ${S.demandA} / ${S.demandB} r/m.`); });
   on("#pasteToggle", "click", () => { ui.paste = !ui.paste; render(); if (ui.paste) { const el = $("#pasteBox"); if (el) el.focus(); } });
   on("#pasteApply", "click", () => {
     const res = parsePasted($("#pasteBox").value);
