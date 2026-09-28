@@ -167,6 +167,14 @@ th[aria-sort="ascending"] .arr,th[aria-sort="descending"] .arr{color:var(--accen
 th.num .sortbtn{flex-direction:row-reverse}
 .cell-edit{width:92px;border:0;border-bottom:1.5px dotted #98A2B3;background:transparent;padding:3px 2px;font:inherit;color:var(--ink);text-align:right;border-radius:0}
 .cell-edit.txt{width:170px;text-align:left}
+.cell-edit.txt.mid{width:130px}
+.linkwrap{display:inline-flex;align-items:center;gap:6px}
+.linkwrap .cell-edit{width:150px}
+.lnk{text-decoration:none;color:var(--accent);font-weight:600;padding:2px 4px;border-radius:4px}
+.lnk:hover{background:var(--hover)}
+.cell-sel2{border:0;border-bottom:1.5px dotted #98A2B3;background:transparent;font:inherit;color:var(--ink);padding:3px 2px;cursor:pointer}
+.cell-sel2:focus{outline:2px solid var(--accent);outline-offset:1px}
+.cell-sel2.set{color:#1D4ED8;font-weight:600}
 .cell-edit:hover{background:var(--hover)}
 .cell-edit:focus{outline:2px solid var(--accent);outline-offset:1px;background:#fff;border-bottom-color:transparent}
 .cell-edit.set{color:#1D4ED8;font-weight:600}
@@ -655,8 +663,12 @@ th.num .sortbtn{flex-direction:row-reverse}
       const it = state.items[g.key] || {};
       const pl = price[g.key] || {};
       const pick = (a, b, c) => (a != null ? a : b != null ? b : c);
-      g.local = localRule(g.vendor, s.localKeywords);
-      g.price = pick(it.price, pl.price, g.bomPrice);
+      if (it.qpn != null) g.qpn = it.qpn;
+      if (it.vendor != null) g.vendor = it.vendor;
+      if (it.link != null) g.link = it.link;
+      g.teams = [...new Set(g.lines.map((m) => m.team))].sort().join(", ");
+      g.local = it.li === "local" ? true : it.li === "international" ? false : localRule(g.vendor, s.localKeywords);
+      g.price = g.bomPrice; // price comes only from the BOM lines
       g.priceSrc = it.price != null ? "edited" : pl.price != null ? "price list" : g.bomPrice != null ? "BOM" : "missing";
       g.buffer = pick(it.buffer, pl.buffer, s.buffer);
       g.lev = pick(it.lev, pl.lev, 0);
@@ -801,9 +813,9 @@ th.num .sortbtn{flex-direction:row-reverse}
     // ---- Final
     const fCols = [{ h: "Group ID", k: "id", w: 6, hidden: true }, { h: "Item Description", k: "d", w: 44, wrap: true }, { h: "QPN", k: "qpn", w: 16 },
       { h: "Vendor", k: "vendor", w: 22 }, { h: "Function - Station", k: "functions", w: 30, wrap: true }, { h: "Link", k: "link", w: 24 },
-      { h: "Local / International", k: "li", w: 13 }, { h: "PO Type", k: "po", w: 12 },
+      { h: "Local / International", k: "li", w: 13 }, { h: "Functional Team", k: "teams", w: 14, wrap: true }, { h: "PO Type", k: "po", w: 12 },
       { h: "Buffer Rate", k: "buffer", w: 9, fmt: "0%", input: true }, { h: "Leverage Qty", k: "lev", w: 10, fmt: "#,##0", input: true },
-      { h: "Unit Price", k: "price", w: 12, fmt: "#,##0.00", input: true, grp: "cost" }, { h: "Cost Markup", k: "costX", w: 10, fmt: "0.00", input: true, grp: "cost" },
+      { h: "Unit Price", k: "price", w: 12, fmt: "#,##0.00", grp: "cost" }, { h: "Cost Markup", k: "costX", w: 10, fmt: "0.00", input: true, grp: "cost" },
       { h: "Overall Unit Cost", k: "unitCost", w: 13, fmt: "#,##0.00", grp: "cost", strong: true },
       { h: `Sum Qty ${A}r/m`, k: "sumA", w: 11, fmt: "#,##0", grp: "A" }, { h: `Calc Qty ${A}r/m`, k: "calcA", w: 11, fmt: "#,##0", grp: "A" },
       { h: `Qty Override ${A}r/m`, k: "ovA", w: 11, fmt: "#,##0", input: true, grp: "A" },
@@ -974,6 +986,7 @@ const defaults = () => ({ ieVersion:4, tab:"ie", project:"Everglades", demandA:2
   priceList:null, settings:{buffer:0.10, localX:1.3, intlX:1.75, localKeywords:"local, amazon"} });
 let S = load();
 S.priceList = null; S.files = (S.files || []).filter((f) => f.kind !== "price");
+for (const k of Object.keys(S.items || {})) { delete S.items[k].price; if (!Object.keys(S.items[k]).length) delete S.items[k]; }
 if (S.ieVersion !== 4) { S.ie = clone(DEFAULT_IE); S.mapOverrides = {}; S.ieVersion = 4; S.demandA = 200; S.demandB = 400; S.tab = "ie"; S.files = S.files.filter((f) => f.kind !== "ie"); }
 S.mapOverrides = {};
 if (!["ie","tpl","upload","master","group","final"].includes(S.tab)) S.tab = "ie";
@@ -1271,7 +1284,7 @@ function renderGrouped(){
 /* ---------- Final ---------- */
 const FINAL_GET = {d:(g) => g.d, qpn:(g) => g.qpn, vendor:(g) => g.vendor, li:(g) => g.local ? "Local" : "International", sumA:(g) => g.sumA, sumB:(g) => g.sumB,
   buffer:(g) => g.buffer, lev:(g) => g.lev, price:(g) => g.price, costX:(g) => g.costX, unitCost:(g) => g.unitCost, qtyA:(g) => g.qtyA, costA:(g) => g.costA,
-  qtyB:(g) => g.qtyB, costB:(g) => g.costB, remark:(g) => g.remark, link:(g) => g.link};
+  qtyB:(g) => g.qtyB, costB:(g) => g.costB, remark:(g) => g.remark, link:(g) => g.link, teams:(g) => g.teams};
 function finalRows(){
   const q = ui.fSearch.toLowerCase();
   const rows = C.groups.filter((g) => (!q || `${g.d} ${g.qpn} ${g.vendor} ${g.functions}`.toLowerCase().includes(q)) &&
@@ -1279,21 +1292,34 @@ function finalRows(){
   return applySort("final", rows, FINAL_GET);
 }
 function finalVal(g, field){
-  return {buffer: Math.round(g.buffer * 1000) / 10, lev: g.lev, price: g.price, costX: g.costX, qtyA: g.qtyA, qtyB: g.qtyB, remark: g.remark}[field];
+  return {buffer: Math.round(g.buffer * 1000) / 10, lev: g.lev, price: g.price, costX: g.costX, qtyA: g.qtyA, qtyB: g.qtyB, remark: g.remark,
+    qpn: g.qpn, vendor: g.vendor, link: g.link, li: g.local ? "local" : "international"}[field];
 }
 function editIn(g, field, label, cls = ""){
   const set = S.items[g.key] && S.items[g.key][field] != null;
   const v = finalVal(g, field);
-  return `<input class="cell-edit ${cls} ${set ? "set" : ""}" data-it="${field}" data-k="${esc(g.key)}" value="${esc(v ?? "")}" placeholder="${field === "price" ? "No price" : field === "remark" ? "Add comment" : ""}" aria-label="${esc(label)}" title="${set ? "Edited. Clear the cell to go back to the calculated value." : "Click to edit"}">`;
+  return `<input class="cell-edit ${cls} ${set ? "set" : ""}" data-it="${field}" data-k="${esc(g.key)}" value="${esc(v ?? "")}" placeholder="${{price:"No price", remark:"Add comment", qpn:"Add QPN", vendor:"Add vendor", link:"Add link"}[field] || ""}" aria-label="${esc(label)}" title="${set ? "Edited. Clear the cell to go back to the calculated value." : "Click to edit"}">`;
+}
+function liSelect(g){
+  const set = S.items[g.key] && S.items[g.key].li != null;
+  return `<select class="cell-sel2 ${set ? "set" : ""}" data-it="li" data-k="${esc(g.key)}" aria-label="Local or international for ${esc(g.d)}" title="${set ? "Edited. Choose Auto to go back to the vendor rule." : "Set from the vendor name. Click to change."}">
+    <option value="" ${set ? "" : "selected"}>${g.local ? "Local" : "International"} (auto)</option>
+    <option value="local" ${set && g.local ? "selected" : ""}>Local</option>
+    <option value="international" ${set && !g.local ? "selected" : ""}>International</option></select>`;
+}
+function linkEdit(g){
+  const open = /^https?:\/\//i.test(g.link || "") ? `<a class="lnk" href="${esc(g.link)}" target="_blank" rel="noopener noreferrer" title="Open link" aria-label="Open link">↗</a>` : "";
+  return `<span class="linkwrap">${editIn(g, "link", "Link for " + g.d, "txt")}${open}</span>`;
 }
 function finalRowHTML(g){
   return `<tr data-row="${esc(g.key)}">
     <td class="sticky wrap strong">${esc(g.d)}${g.flags.length ? `<div>${g.flags.map((f) => `<span class="tag warn">${esc(f)}</span>`).join("")}</div>` : ""}</td>
-    <td class="mid">${esc(g.qpn)}</td><td class="mid">${esc(g.vendor)}</td><td>${linkCell(g.link)}</td><td>${g.local ? "Local" : "International"}</td>
+    <td class="ein">${editIn(g, "qpn", "QPN for " + g.d, "txt mid")}</td><td class="ein">${editIn(g, "vendor", "Vendor for " + g.d, "txt")}</td>
+    <td class="ein">${linkEdit(g)}</td><td class="ein">${liSelect(g)}</td><td>${esc(g.teams)}</td>
     <td class="num">${fInt(g.sumA)}</td><td class="num">${fInt(g.sumB)}</td>
     <td class="num ein">${editIn(g, "buffer", "Buffer percent for " + g.d)}</td>
     <td class="num ein">${editIn(g, "lev", "Leverage qty for " + g.d)}</td>
-    <td class="num ein ${g.price == null ? "warn" : ""}">${editIn(g, "price", "Unit price for " + g.d)}</td>
+    <td class="num ${g.price == null ? "warn" : ""}">${g.price == null ? "No price" : fPrice(g.price)}</td>
     <td class="num ein">${editIn(g, "costX", "Cost markup for " + g.d)}</td>
     <td class="num" data-f="unitCost">${fPrice(g.unitCost)}</td>
     <td class="num ein strongcell">${editIn(g, "qtyA", "Final qty at demand A for " + g.d)}</td><td class="num" data-f="costA">${fMoney(g.costA)}</td>
@@ -1330,20 +1356,22 @@ function renderFinal(){
     <select class="sel" id="fOnly" aria-label="Show"><option value="">All items</option><option value="noprice" ${ui.fOnly === "noprice" ? "selected" : ""}>Without a price</option><option value="flag" ${ui.fOnly === "flag" ? "selected" : ""}>With warning</option><option value="edited" ${ui.fOnly === "edited" ? "selected" : ""}>Edited by you</option></select>
     <span class="grow"></span><span class="count">${fInt(rows.length)} of ${fInt(C.groups.length)} items</span></div>
   <div class="tscroll"><table class="grid final" id="finalTable"><thead><tr>
-    ${th("d","Item Description","sticky")}${th("qpn","QPN")}${th("vendor","Vendor")}${th("link","Link")}${th("li","Local or International")}${th("sumA",`Sum Qty ${A}r/m`,"num")}${th("sumB",`Sum Qty ${B}r/m`,"num")}
+    ${th("d","Item Description","sticky")}${th("qpn","QPN")}${th("vendor","Vendor")}${th("link","Link")}${th("li","Local or International")}${th("teams","Functional Team")}${th("sumA",`Sum Qty ${A}r/m`,"num")}${th("sumB",`Sum Qty ${B}r/m`,"num")}
     ${th("buffer","Buffer %","num")}${th("lev","Leverage Qty","num")}${th("price","Unit Price","num")}${th("costX","Cost Markup","num")}${th("unitCost","Overall Unit Cost","num")}
     ${th("qtyA",`Final Qty ${A}r/m`,"num")}${th("costA",`Total Price ${A}r/m`,"num")}${th("qtyB",`Final Qty ${B}r/m`,"num")}${th("costB",`Total Price ${B}r/m`,"num")}${th("remark","Capex comment")}
   </tr></thead><tbody>${rows.map(finalRowHTML).join("") || `<tr><td colspan="17" class="dim">No items match.</td></tr>`}</tbody>
-  <tfoot><tr><td class="sticky">Total</td><td colspan="11"></td><td class="num" id="tQA">${fInt(C.totals.qtyA)}</td><td class="num" id="tCA">${fMoney(C.totals.costA)}</td><td class="num" id="tQB">${fInt(C.totals.qtyB)}</td><td class="num" id="tCB">${fMoney(C.totals.costB)}</td><td></td></tr></tfoot></table></div>`;
+  <tfoot><tr><td class="sticky">Total</td><td colspan="12"></td><td class="num" id="tQA">${fInt(C.totals.qtyA)}</td><td class="num" id="tCA">${fMoney(C.totals.costA)}</td><td class="num" id="tQB">${fInt(C.totals.qtyB)}</td><td class="num" id="tCB">${fMoney(C.totals.costB)}</td><td></td></tr></tfoot></table></div>`;
 }
 function patchFinalRow(key){
   const g = C.groups.find((x) => x.key === key);
   const tr = [...document.querySelectorAll("#finalTable tr[data-row]")].find((r) => r.dataset.row === key);
   if (!g || !tr) return;
   const f = {unitCost:fPrice(g.unitCost), costA:fMoney(g.costA), costB:fMoney(g.costB)};
+  const lw = tr.querySelector(".linkwrap"); if (lw && !lw.contains(document.activeElement)) lw.outerHTML = linkEdit(g);
   tr.querySelectorAll("[data-f]").forEach((td) => { td.textContent = f[td.dataset.f]; });
-  tr.querySelectorAll("input[data-it]").forEach((inp) => {
+  tr.querySelectorAll("input[data-it], select[data-it]").forEach((inp) => {
     if (inp === document.activeElement) return;
+    if (inp.tagName === "SELECT") { inp.outerHTML = liSelect(g); return; }
     const set = S.items[key] && S.items[key][inp.dataset.it] != null;
     inp.value = finalVal(g, inp.dataset.it) ?? ""; inp.classList.toggle("set", !!set);
     inp.title = set ? "Edited. Clear the cell to go back to the calculated value." : "Click to edit";
@@ -1398,7 +1426,7 @@ function bindView(){
   on("#mFn", "change", (e) => { ui.mFn = e.target.value; render(); });
   on("#gFlag", "change", (e) => { ui.gFlag = e.target.checked; render(); });
   on("#fOnly", "change", (e) => { ui.fOnly = e.target.value; render(); });
-  on("#clearEdits", "click", () => { if (confirm("Clear every buffer, leverage, price, markup, qty and Capex comment you typed?")) { S.items = {}; save(); recompute(); render(); } });
+  on("#clearEdits", "click", () => { if (confirm("Clear every value you typed in the Final list?")) { S.items = {}; save(); recompute(); render(); } });
   const setNum = (id, fn) => on(id, "change", (e) => { const v = Number(e.target.value); if (isFinite(v) && e.target.value !== "") { fn(v); save(); recompute(); render(); } else { toast("Enter a number."); render(); } });
   setNum("#sBuf", (v) => S.settings.buffer = v / 100);
   setNum("#sLoc", (v) => S.settings.localX = v);
@@ -1438,7 +1466,7 @@ document.addEventListener("change", (e) => {
     const k = t.dataset.k, f = t.dataset.it, raw = t.value.trim();
     const it = S.items[k] || {};
     if (raw === "") delete it[f];
-    else if (f === "remark") it[f] = raw;
+    else if (["remark", "qpn", "vendor", "link", "li"].includes(f)) it[f] = raw;
     else {
       const n = Number(raw.replace(/[$,%\s]/g, ""));
       if (!isFinite(n) || n < 0) { toast("Enter a number of 0 or more, or clear the cell for the calculated value."); patchFinalRow(k); return; }
