@@ -185,6 +185,27 @@ th.num .sortbtn{flex-direction:row-reverse}
 .grid.sheet td.blank{background:var(--warn-bg)!important;box-shadow:inset 0 0 0 1px #E9C46A}
 .grid.sheet tr.upd td{background:#EEF1F5!important;border-bottom:2px solid var(--rule-strong)}
 .grid.sheet td.del{padding:0 6px;vertical-align:middle}
+/* Final table: same colour groups as the Final sheet in the Excel export */
+.grid.final{--fh:#1F3B5C;--cost-h:#2F6B4F;--cost-c:#EEF6F1;--cost-s:#D9EDE0;--a-h:#1F4E8C;--a-c:#EDF3FB;--a-s:#D3E3F8;--b-h:#8A5A12;--b-c:#FDF5E8;--b-s:#F8E2BE}
+.grid.final th,.grid.final th.sticky{background:var(--fh);color:#fff;border-bottom-color:var(--fh)}
+.grid.final th.gcost{background:var(--cost-h);border-bottom-color:var(--cost-h)}
+.grid.final th.gA{background:var(--a-h);border-bottom-color:var(--a-h)}
+.grid.final th.gB{background:var(--b-h);border-bottom-color:var(--b-h)}
+.grid.final th .arr{color:rgba(255,255,255,.55)}
+.grid.final th[aria-sort="ascending"] .arr,.grid.final th[aria-sort="descending"] .arr{color:#fff}
+.grid.final th .sortbtn:focus-visible{outline-color:#fff}
+.grid.final tbody td.gcost{background:var(--cost-c)}
+.grid.final tbody td.gcost.s{background:var(--cost-s)}
+.grid.final tbody td.gA{background:var(--a-c)}
+.grid.final tbody td.gA.s{background:var(--a-s)}
+.grid.final tbody td.gB{background:var(--b-c)}
+.grid.final tbody td.gB.s{background:var(--b-s)}
+.grid.final td.s{font-weight:600}
+.grid.final tfoot td.gA{background:var(--a-s)}
+.grid.final tfoot td.gB{background:var(--b-s)}
+.grid.final tfoot td.gcost{background:var(--cost-s)}
+.ledger div.big.gA{box-shadow:inset 0 4px 0 #1F4E8C}
+.ledger div.big.gB{box-shadow:inset 0 4px 0 #8A5A12}
 @media (max-width:720px){
   .wrap{padding:0 12px}
   .proj-name{font-size:30px}
@@ -1354,21 +1375,21 @@ function finalRowHTML(g){
     <td class="ein">${editIn(g, "qpn", "QPN for " + g.d, "txt mid")}</td><td class="ein">${editIn(g, "vendor", "Vendor for " + g.d, "txt")}</td>
     <td class="ein">${linkEdit(g)}</td><td class="ein">${liSelect(g)}</td><td>${esc(g.teams)}</td>
     <td class="ein">${editIn(g, "leadTime", "Lead time for " + g.d, "txt mid")}</td>
-    ${useA() ? `<td class="num">${fInt(g.sumA)}</td>` : ""}${useB() ? `<td class="num">${fInt(g.sumB)}</td>` : ""}
+    ${useA() ? `<td class="num gA">${fInt(g.sumA)}</td>` : ""}${useB() ? `<td class="num gB">${fInt(g.sumB)}</td>` : ""}
     <td class="num ein">${editIn(g, "buffer", "Buffer percent for " + g.d)}</td>
     <td class="num ein">${editIn(g, "lev", "Leverage qty for " + g.d)}</td>
-    <td class="num ${g.price == null ? "warn" : ""}">${g.price == null ? "No price" : fPrice(g.price)}</td>
-    <td class="num ein">${editIn(g, "costX", "Cost markup for " + g.d)}</td>
-    <td class="num" data-f="unitCost">${fPrice(g.unitCost)}</td>
-    ${useA() ? `<td class="num ein strongcell">${editIn(g, "qtyA", "Final qty at demand A for " + g.d)}</td><td class="num" data-f="costA">${fMoney(g.costA)}</td>` : ""}
-    ${useB() ? `<td class="num ein strongcell">${editIn(g, "qtyB", "Final qty at demand B for " + g.d)}</td><td class="num" data-f="costB">${fMoney(g.costB)}</td>` : ""}
+    <td class="num gcost ${g.price == null ? "warn" : ""}">${g.price == null ? "No price" : fPrice(g.price)}</td>
+    <td class="num ein gcost">${editIn(g, "costX", "Cost markup for " + g.d)}</td>
+    <td class="num gcost s" data-f="unitCost">${fPrice(g.unitCost)}</td>
+    ${useA() ? `<td class="num ein strongcell gA s">${editIn(g, "qtyA", "Final qty at demand A for " + g.d)}</td><td class="num gA s" data-f="costA">${fMoney(g.costA)}</td>` : ""}
+    ${useB() ? `<td class="num ein strongcell gB s">${editIn(g, "qtyB", "Final qty at demand B for " + g.d)}</td><td class="num gB s" data-f="costB">${fMoney(g.costB)}</td>` : ""}
     <td class="ein">${editIn(g, "remark", "Capex comment for " + g.d, "txt")}</td>
     <td class="wrap dim" style="white-space:pre-line">${esc(g.notesText)}</td></tr>`;
 }
 function ledgerHTML(){
   const t = C.totals, edited = Object.keys(S.items).filter((k) => C.groups.some((g) => g.key === k)).length;
-  return `${useA() ? `<div class="big"><dt>Total NRE ${S.demandA}r/m</dt><dd>${fMoney(t.costA)}</dd></div>` : ""}
-    ${useB() ? `<div class="big"><dt>Total NRE ${S.demandB}r/m</dt><dd>${fMoney(t.costB)}</dd></div>` : ""}
+  return `${useA() ? `<div class="big gA"><dt>Total NRE ${S.demandA}r/m</dt><dd>${fMoney(t.costA)}</dd></div>` : ""}
+    ${useB() ? `<div class="big gB"><dt>Total NRE ${S.demandB}r/m</dt><dd>${fMoney(t.costB)}</dd></div>` : ""}
     <div><dt>Items</dt><dd>${fInt(C.groups.length)}</dd></div>
     <div><dt>Items without a price</dt><dd class="${t.noPrice ? "warnv" : ""}">${t.noPrice}</dd></div>
     <div><dt>Items you edited</dt><dd>${edited}</dd></div>${t.noTotal ? `<div><dt>Lines without Total Qty</dt><dd class="warnv">${fInt(t.noTotal)}</dd></div>` : ""}`;
@@ -1395,11 +1416,11 @@ function renderFinal(){
     <select class="sel" id="fOnly" aria-label="Show"><option value="">All items</option><option value="noprice" ${ui.fOnly === "noprice" ? "selected" : ""}>Without a price</option><option value="flag" ${ui.fOnly === "flag" ? "selected" : ""}>With warning</option><option value="edited" ${ui.fOnly === "edited" ? "selected" : ""}>Edited by you</option></select>
     <span class="grow"></span><span class="count">${fInt(rows.length)} of ${fInt(C.groups.length)} items</span></div>
   <div class="tscroll"><table class="grid final" id="finalTable"><thead><tr>
-    ${th("d","Item Description","sticky")}${th("qpn","QPN")}${th("vendor","Vendor")}${th("link","Link")}${th("li","Local or International")}${th("teams","Functional Team")}${th("leadTime","Lead Time")}${useA() ? th("sumA",`Sum Qty ${A}r/m`,"num") : ""}${useB() ? th("sumB",`Sum Qty ${B}r/m`,"num") : ""}
-    ${th("buffer","Buffer %","num")}${th("lev","Leverage Qty","num")}${th("price","Unit Price","num")}${th("costX","Cost Markup","num")}${th("unitCost","Overall Unit Cost","num")}
-    ${useA() ? th("qtyA",`Final Qty ${A}r/m`,"num") + th("costA",`Total Price ${A}r/m`,"num") : ""}${useB() ? th("qtyB",`Final Qty ${B}r/m`,"num") + th("costB",`Total Price ${B}r/m`,"num") : ""}${th("remark","Capex comment")}${th("notes","Notes (from team BOMs)")}
+    ${th("d","Item Description","sticky")}${th("qpn","QPN")}${th("vendor","Vendor")}${th("link","Link")}${th("li","Local or International")}${th("teams","Functional Team")}${th("leadTime","Lead Time")}${useA() ? th("sumA",`Sum Qty ${A}r/m`,"num gA") : ""}${useB() ? th("sumB",`Sum Qty ${B}r/m`,"num gB") : ""}
+    ${th("buffer","Buffer %","num")}${th("lev","Leverage Qty","num")}${th("price","Unit Price","num gcost")}${th("costX","Cost Markup","num gcost")}${th("unitCost","Overall Unit Cost","num gcost")}
+    ${useA() ? th("qtyA",`Final Qty ${A}r/m`,"num gA") + th("costA",`Total Price ${A}r/m`,"num gA") : ""}${useB() ? th("qtyB",`Final Qty ${B}r/m`,"num gB") + th("costB",`Total Price ${B}r/m`,"num gB") : ""}${th("remark","Capex comment")}${th("notes","Notes (from team BOMs)")}
   </tr></thead><tbody>${rows.map(finalRowHTML).join("") || `<tr><td colspan="20" class="dim">No items match.</td></tr>`}</tbody>
-  <tfoot><tr><td class="sticky">Total</td><td colspan="${12 + (useA() && useB() ? 1 : 0)}"></td>${useA() ? `<td class="num" id="tQA">${fInt(C.totals.qtyA)}</td><td class="num" id="tCA">${fMoney(C.totals.costA)}</td>` : ""}${useB() ? `<td class="num" id="tQB">${fInt(C.totals.qtyB)}</td><td class="num" id="tCB">${fMoney(C.totals.costB)}</td>` : ""}<td></td><td></td></tr></tfoot></table></div>`;
+  <tfoot><tr><td class="sticky">Total</td><td colspan="${12 + (useA() && useB() ? 1 : 0)}"></td>${useA() ? `<td class="num gA" id="tQA">${fInt(C.totals.qtyA)}</td><td class="num gA" id="tCA">${fMoney(C.totals.costA)}</td>` : ""}${useB() ? `<td class="num gB" id="tQB">${fInt(C.totals.qtyB)}</td><td class="num gB" id="tCB">${fMoney(C.totals.costB)}</td>` : ""}<td></td><td></td></tr></tfoot></table></div>`;
 }
 function patchFinalRow(key){
   const g = C.groups.find((x) => x.key === key);
