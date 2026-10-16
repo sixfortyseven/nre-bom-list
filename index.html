@@ -914,6 +914,13 @@ th.num .sortbtn{flex-direction:row-reverse}
       columns: [{ name: "Function" }, { name: "Station Name" }, ...dem.map((x) => ({ name: x.h })), { name: "Note" }],
       rows: (rowsIE.length ? rowsIE : [{ fn: team, st: "", note: "" }]).map((r) => [r.fn, r.st, ...dem.map((x) => (r.st ? ieVal(r, x.d) : null)), r.note || "-"]) });
     iws.eachRow((row) => row.eachCell((c) => { c.font = { ...font, bold: row.number === 1 }; }));
+    // Header: explicit light fill + dark text so it stays readable whatever the table style renders
+    iws.getRow(1).height = 22;
+    iws.getRow(1).eachCell((c) => {
+      c.font = { ...font, bold: true, color: { argb: "FF1B2230" } };
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD9E2EC" } };
+      c.alignment = { vertical: "middle", wrapText: true };
+    });
     const nI = Math.max(rowsIE.length, 1) + 1;
     const nr = iws.getRow(nI + 2).getCell(1);
     nr.value = "Filled in by IE. Do not edit. Pick a Station Name from this list in the BOM sheet."; nr.font = { ...font, italic: true };
